@@ -1,0 +1,3052 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwNTkxMzMwNzQyOTk5OTYxNTQwNyIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjX2ZlZTFiNWVmNzI1OWZmNWJfc3BvX2xhYl81XzYuaHRtbC01MTYifSwiZXhwIjoxNzk1MzU5NjA5LCJpYXQiOjE3OTUzNTYwMDksImFsZyI6IlJTMjU2In0.EGE7n2JD8GBiVeVnZIsdcve9w-NvUyTvt4ZdgC7DpL73d_aBrPZoGqoifIFdiALNn-67rlX1baMjujBhgJDCmBEgUjivcNLOwkUAdv17sZkfYjyiW4lBsQZD2r34yG-fyuNxxYAaDaRCXQvqIX0noz4oLh1gYF2QGfS6LmX4eFQnbXdi9QNo9QOdPEYeb5vYw16R0Wk6OrVuq9eWH47aM73v_wmbD7cGJNn2yJQYXf9GyXJMqI20bAAtncPezI-5D9Ez3s0PrDid4M9luFfW7G7UBMfGEwth4rWwmD15jTPxot4qMCcphrm4sS66NTfnNYzFqhh7CvxU8AaixM590A","c_fee1b5ef7259ff5b_spo_lab_5_6.html-516")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.extensions="";var l=0,t=null,r=null,q=[],F=new TextEncoder,
+G=new TextDecoder;c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*
+16|0;return(f==="x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;
+(g=t)==null||g.postMessage(a)}};Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  const OVERLAY_SELECTOR =
+    'dialog[open], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"]';
+
+  function isVisibleOverlay(element) {
+    if (element.closest('[hidden], [aria-hidden="true"], [inert]')) {
+      return false;
+    }
+    if (window.getComputedStyle(element).visibility === 'hidden') {
+      return false;
+    }
+    for (let cur = element; cur; cur = cur.parentElement) {
+      if (window.getComputedStyle(cur).display === 'none') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function hasOpenOverlay() {
+    const candidates = document.querySelectorAll(OVERLAY_SELECTOR);
+    for (let i = 0; i < candidates.length; i++) {
+      if (isVisibleOverlay(candidates[i])) {
+        return true;
+      }
+    }
+    try {
+      if (document.querySelector('[popover]:popover-open')) {
+        return true;
+      }
+    } catch (e) {
+      // Ignore engines that do not support :popover-open.
+    }
+    return false;
+  }
+
+  function isNonEmptySearchInput(target) {
+    return (
+      Boolean(target) &&
+      target.tagName === 'INPUT' &&
+      typeof target.type === 'string' &&
+      target.type.toLowerCase() === 'search' &&
+      typeof target.value === 'string' &&
+      target.value.length > 0
+    );
+  }
+
+  function shouldIgnoreEscape(event) {
+    return (
+      event.key !== 'Escape' ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.isComposing ||
+      event.repeat ||
+      event.keyCode === 229 ||
+      isNonEmptySearchInput(event.target)
+    );
+  }
+
+  let shouldIgnoreCaptureState = false;
+
+  window.addEventListener(
+    'keydown',
+    function(event) {
+      if (event.key === 'Escape') {
+        shouldIgnoreCaptureState =
+          hasOpenOverlay() || isNonEmptySearchInput(event.target);
+      }
+    },
+    {capture: true},
+  );
+
+  window.addEventListener('keydown', function(event) {
+    if (
+      shouldIgnoreEscape(event) ||
+      event.defaultPrevented ||
+      shouldIgnoreCaptureState
+    ) {
+      return;
+    }
+    const wasBlockedOnCapture = shouldIgnoreCaptureState;
+    queueMicrotask(function() {
+      if (event.defaultPrevented || wasBlockedOnCapture) {
+        return;
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({'type': 'escapeKey'}, '*');
+      }
+    });
+  });
+})();</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СПО • Лабораторная работа №5–6: BIOS/UEFI, POST и Загрузчики ОС</title>
+    <style>
+        /* =====================================================================
+           1. ДИЗАЙН-ТОКЕНЫ И ТЕМЫ (100% АВТОНОМНО, БЕЗ ВНЕШНИХ CDN)
+           ===================================================================== */
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --bg-code: #0b1120;
+            --bg-header: rgba(255, 255, 255, 0.95);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-code: #e2e8f0;
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --accent-soft: #e0f2fe;
+            --accent-text: #0369a1;
+            --indigo: #4f46e5;
+            --indigo-soft: #eef2ff;
+            --emerald: #059669;
+            --emerald-soft: #ecfdf5;
+            --amber: #d97706;
+            --amber-soft: #fffbeb;
+            --rose: #e11d48;
+            --rose-soft: #fff1f2;
+            --shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+            --radius: 16px;
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, "Liberation Mono", "Courier New", monospace;
+        }
+
+        html.dark {
+            --bg-body: #020617;
+            --bg-card: #0f172a;
+            --bg-subtle: #1e293b;
+            --bg-code: #030712;
+            --bg-header: rgba(15, 23, 42, 0.94);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-code: #e2e8f0;
+            --border: #1e293b;
+            --border-strong: #334155;
+            --accent: #0ea5e9;
+            --accent-hover: #38bdf8;
+            --accent-soft: rgba(14, 165, 233, 0.16);
+            --accent-text: #7dd3fc;
+            --indigo: #818cf8;
+            --indigo-soft: rgba(99, 102, 241, 0.16);
+            --emerald: #34d399;
+            --emerald-soft: rgba(16, 185, 129, 0.14);
+            --amber: #fbbf24;
+            --amber-soft: rgba(245, 158, 11, 0.14);
+            --rose: #fb7185;
+            --rose-soft: rgba(244, 63, 94, 0.15);
+            --shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.58;
+            min-height: 100vh;
+            transition: background 0.2s, color 0.2s;
+            overflow-x: hidden;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.88em;
+            background: var(--accent-soft);
+            color: var(--accent-text);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+        pre code { background: transparent; color: inherit; padding: 0; }
+
+        .hidden { display: none !important; }
+        .container { max-width: 1220px; margin: 0 auto; padding: 0 16px; }
+        .icon { width: 18px; height: 18px; display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+        /* =====================================================================
+           2. ШАПКА И НАВИГАЦИЯ (МОБИЛЬНЫЙ ФИКС: STATIC НА <= 768PX)
+           ===================================================================== */
+        #main-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: var(--bg-header);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            #main-header { position: static !important; }
+        }
+
+        .header-inner { padding: 14px 0 10px; display: flex; flex-direction: column; gap: 12px; }
+        .header-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+
+        .brand { display: flex; align-items: flex-start; gap: 12px; min-width: 0; flex: 1; }
+        .brand-logo {
+            width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
+            background: linear-gradient(135deg, #0284c7, #4f46e5, #059669);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; box-shadow: 0 6px 18px rgba(2, 132, 199, 0.3);
+        }
+        .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+        .badge {
+            font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px;
+            border: 1px solid var(--border-strong); display: inline-flex; align-items: center; gap: 4px;
+        }
+        .badge-cyan { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(14,165,233,0.35); }
+        .badge-emerald { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(16,185,129,0.35); }
+        .badge-indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99,102,241,0.35); }
+        .badge-amber { background: var(--amber-soft); color: var(--amber); border-color: rgba(245,158,11,0.35); }
+        .badge-rose { background: var(--rose-soft); color: var(--rose); border-color: rgba(225,29,72,0.35); }
+
+        .header-title { font-size: 1.12rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; }
+        .header-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 9px 14px; border-radius: 11px; font-size: 13px; font-weight: 600;
+            border: 1px solid transparent; cursor: pointer; transition: 0.15s ease;
+            font-family: var(--font-sans); color: var(--text-main); background: var(--bg-subtle);
+            user-select: none;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(2,132,199,0.25); }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-emerald { background: #059669; color: #fff; }
+        .btn-emerald:hover { background: #047857; }
+        .btn-indigo { background: #4f46e5; color: #fff; }
+        .btn-indigo:hover { background: #4338ca; }
+        .btn-amber { background: #d97706; color: #fff; }
+        .btn-amber:hover { background: #b45309; }
+        .btn-rose { background: #e11d48; color: #fff; }
+        .btn-rose:hover { background: #be123c; }
+        .btn-outline { background: var(--bg-subtle); border-color: var(--border-strong); color: var(--text-main); }
+        .btn-outline:hover { border-color: var(--accent); }
+        .btn-sm { padding: 6px 11px; font-size: 12px; border-radius: 9px; }
+
+        .lang-switch {
+            display: inline-flex; background: var(--bg-subtle); padding: 3px;
+            border-radius: 11px; border: 1px solid var(--border-strong);
+        }
+        .lang-btn {
+            padding: 5px 10px; border-radius: 8px; border: none; background: transparent;
+            color: var(--text-muted); font-size: 12px; font-weight: 700; cursor: pointer;
+        }
+        .lang-btn.active { background: var(--accent); color: #fff; }
+
+        .tabs-nav {
+            display: flex; gap: 8px; overflow-x: auto; white-space: nowrap;
+            padding: 10px 0 4px; border-top: 1px solid var(--border);
+            scrollbar-width: thin;
+        }
+        .tab-btn {
+            padding: 8px 14px; border-radius: 11px; border: 1px solid transparent;
+            background: var(--bg-subtle); color: var(--text-muted);
+            font-size: 13px; font-weight: 600; cursor: pointer; flex-shrink: 0;
+            display: inline-flex; align-items: center; gap: 7px; transition: 0.15s;
+        }
+        .tab-btn:hover { color: var(--text-main); border-color: var(--border-strong); }
+        .tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 3px 10px rgba(2,132,199,0.28); }
+
+        /* =====================================================================
+           3. СЕТКИ, КАРТОЧКИ, ТАБЛИЦЫ, КОНСОЛИ
+           ===================================================================== */
+        main { padding: 24px 0 48px; }
+        .tab-content { display: flex; flex-direction: column; gap: 22px; }
+
+        .hero-banner {
+            padding: 22px; border-radius: var(--radius);
+            background: linear-gradient(135deg, var(--accent-soft), var(--indigo-soft));
+            border: 1px solid rgba(14, 165, 233, 0.32);
+        }
+        .hero-banner h2 { font-size: 1.48rem; font-weight: 800; margin: 8px 0 6px; line-height: 1.25; }
+        .hero-banner p { font-size: 0.92rem; color: var(--text-muted); max-width: 860px; }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow);
+        }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .step-num {
+            width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 15px;
+            background: var(--accent-soft); color: var(--accent-text);
+        }
+        .card h3 { font-size: 1.15rem; font-weight: 800; line-height: 1.3; }
+        .muted { color: var(--text-muted); font-size: 0.9rem; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+        .grid-12 { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 18px; }
+        .col-7 { grid-column: span 7; }
+        .col-5 { grid-column: span 5; }
+        .col-6 { grid-column: span 6; }
+
+        @media (max-width: 900px) {
+            .grid-2, .grid-3, .grid-12 { grid-template-columns: 1fr; }
+            .col-7, .col-5, .col-6 { grid-column: span 1; }
+        }
+
+        .callout {
+            padding: 14px 16px; border-radius: 12px; font-size: 0.88rem;
+            border: 1px solid var(--border-strong); background: var(--bg-subtle);
+            margin-top: 12px;
+        }
+        .callout-cyan { background: var(--accent-soft); border-color: rgba(14,165,233,0.35); }
+        .callout-rose { background: var(--rose-soft); border-color: rgba(225,29,72,0.35); }
+        .callout-amber { background: var(--amber-soft); border-color: rgba(217,119,6,0.35); }
+        .callout-emerald { background: var(--emerald-soft); border-color: rgba(5,150,105,0.35); }
+        .callout-title { font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+
+        .table-wrap {
+            width: 100%; overflow-x: auto; border-radius: 12px;
+            border: 1px solid var(--border-strong); margin-top: 12px;
+        }
+        table.data-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 580px; }
+        table.data-table th {
+            text-align: left; padding: 11px 14px; background: var(--bg-subtle);
+            font-weight: 700; border-bottom: 1px solid var(--border-strong);
+        }
+        table.data-table td {
+            padding: 10px 14px; border-bottom: 1px solid var(--border);
+            vertical-align: top; color: var(--text-muted);
+        }
+        table.data-table td strong { color: var(--text-main); }
+        table.data-table tr:last-child td { border-bottom: none; }
+
+        .cmd-box {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            background: var(--bg-code); color: #34d399; padding: 11px 14px;
+            border-radius: 11px; border: 1px solid var(--border-strong);
+            font-family: var(--font-mono); font-size: 12.5px; overflow-x: auto;
+        }
+
+        pre.console-box {
+            background: var(--bg-code); color: #e2e8f0;
+            padding: 15px 16px; border-radius: 12px;
+            font-family: var(--font-mono); font-size: 12px; line-height: 1.55;
+            overflow-x: auto; border: 1px solid var(--border-strong);
+            white-space: pre-wrap; word-break: break-word;
+        }
+
+        ul.nice-list, ol.nice-list { padding-left: 20px; display: flex; flex-direction: column; gap: 7px; font-size: 0.9rem; color: var(--text-muted); }
+        ul.nice-list strong, ol.nice-list strong { color: var(--text-main); }
+
+        /* =====================================================================
+           4. ИНТЕРАКТИВНЫЙ СТЕППЕР СТАРТА ПК (ЛЕКЦИЯ)
+           ===================================================================== */
+        .stepper-grid {
+            display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px;
+            margin-bottom: 14px;
+        }
+        @media (max-width: 900px) { .stepper-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (max-width: 520px) { .stepper-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+        .step-btn {
+            padding: 12px 10px; border-radius: 12px; border: 1px solid var(--border-strong);
+            background: var(--bg-subtle); color: var(--text-main);
+            text-align: left; cursor: pointer; transition: 0.15s;
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .step-btn:hover { border-color: var(--accent); }
+        .step-btn.active {
+            background: var(--accent); color: #fff; border-color: var(--accent);
+            box-shadow: 0 4px 14px rgba(2,132,199,0.32);
+        }
+        .step-btn .st-idx { font-size: 11px; font-weight: 800; opacity: 0.8; font-family: var(--font-mono); }
+        .step-btn .st-lbl { font-size: 12px; font-weight: 700; line-height: 1.25; }
+
+        .step-detail-box {
+            padding: 16px 18px; border-radius: 14px; background: var(--bg-subtle);
+            border: 1px solid var(--border-strong); border-left: 4px solid var(--accent);
+        }
+
+        /* =====================================================================
+           5. СИМУЛЯТОР POST (WEB AUDIO API + EZ DEBUG LED)
+           ===================================================================== */
+        .sim-box {
+            background: var(--bg-subtle); border: 1px solid var(--border-strong);
+            border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 14px;
+        }
+        .sim-title {
+            font-size: 12px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.04em; color: var(--accent-text);
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .mobo-panel {
+            background: #0b1120; border: 2px solid #334155; border-radius: 14px;
+            padding: 16px; color: #e2e8f0; display: flex; flex-wrap: wrap;
+            align-items: center; justify-content: space-between; gap: 14px;
+        }
+        .led-strip { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .led-unit { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .led-bulb {
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #1e293b; border: 2px solid #475569;
+            transition: 0.2s;
+        }
+        .led-bulb.on-red { background: #ef4444; border-color: #fca5a5; box-shadow: 0 0 14px #ef4444, 0 0 28px #ef4444; }
+        .led-bulb.on-amber { background: #f59e0b; border-color: #fde68a; box-shadow: 0 0 14px #f59e0b, 0 0 28px #f59e0b; }
+        .led-bulb.on-green { background: #10b981; border-color: #a7f3d0; box-shadow: 0 0 14px #10b981, 0 0 28px #10b981; }
+        .led-label { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #94a3b8; }
+
+        .beep-wave {
+            font-family: var(--font-mono); font-size: 13px; color: #38bdf8;
+            background: #020617; padding: 8px 12px; border-radius: 8px; border: 1px solid #1e293b;
+        }
+
+        .post-btn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+        .post-scenario-btn {
+            padding: 10px 12px; border-radius: 11px; border: 1px solid var(--border-strong);
+            background: var(--bg-card); color: var(--text-main); cursor: pointer;
+            text-align: left; font-size: 12px; font-weight: 600; transition: 0.15s;
+            display: flex; flex-direction: column; gap: 3px;
+        }
+        .post-scenario-btn:hover { border-color: var(--accent); }
+        .post-scenario-btn.active { border-color: var(--accent); background: var(--accent-soft); }
+        .post-scenario-btn small { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+
+        /* =====================================================================
+           6. СИМУЛЯТОР ЗАГРУЗЧИКА (BCDEDIT + WBM / GRUB ЭКРАН)
+           ===================================================================== */
+        .boot-screen {
+            border-radius: 12px; padding: 18px; font-family: var(--font-sans);
+            min-height: 235px; display: flex; flex-direction: column; justify-content: space-between;
+            border: 2px solid #334155; transition: 0.25s;
+        }
+        .boot-screen.wbm-theme {
+            background: linear-gradient(160deg, #005a9e, #003e73);
+            color: #ffffff;
+        }
+        .boot-screen.grub-theme {
+            background: #000000;
+            color: #d1d5db;
+            font-family: var(--font-mono);
+        }
+        .boot-item {
+            padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.2); font-size: 13px;
+        }
+        .wbm-theme .boot-item.selected { background: rgba(255,255,255,0.22); border-color: #ffffff; font-weight: 700; }
+        .grub-theme .boot-item { border-radius: 0; border: none; padding: 6px 10px; margin-bottom: 4px; }
+        .grub-theme .boot-item.selected { background: #e5e7eb; color: #000000; font-weight: 700; }
+
+        /* =====================================================================
+           7. ФОРМЫ, ТЕСТ (20 ВОПРОСОВ), TOAST, ПЕЧАТЬ / PDF
+           ===================================================================== */
+        .form-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+        .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+        .field label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .input, .textarea, .select {
+            width: 100%; padding: 9px 12px; border-radius: 10px;
+            background: var(--bg-card); color: var(--text-main);
+            border: 1px solid var(--border-strong); font-family: var(--font-sans); font-size: 13px;
+            outline: none;
+        }
+        .input:focus, .textarea:focus, .select:focus { border-color: var(--accent); }
+        .input-mono { font-family: var(--font-mono); font-weight: 600; }
+
+        .quiz-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+        }
+        .quiz-card.q-correct { border-color: #10b981; }
+        .quiz-card.q-wrong { border-color: #e11d48; }
+        .quiz-q { font-weight: 700; font-size: 0.94rem; }
+        .quiz-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        @media (max-width: 640px) { .quiz-opts { grid-template-columns: 1fr; } }
+
+        .quiz-opt {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            border-radius: 10px; border: 1px solid var(--border-strong);
+            background: var(--bg-subtle); cursor: pointer; font-size: 13px; transition: 0.15s;
+        }
+        .quiz-opt:hover { border-color: var(--accent); }
+        .quiz-opt input { accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; }
+        .quiz-opt.opt-right { background: var(--emerald-soft); border-color: #10b981; font-weight: 600; }
+        .quiz-opt.opt-wrong { background: var(--rose-soft); border-color: #e11d48; }
+
+        #toast {
+            position: fixed; bottom: 20px; right: 20px; z-index: 60;
+            background: var(--accent); color: #fff; padding: 12px 18px; border-radius: 12px;
+            font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+            transform: translateY(100px); opacity: 0; transition: 0.25s ease;
+            pointer-events: none; max-width: 90vw;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+
+        footer {
+            text-align: center; padding: 24px 16px; font-size: 12px;
+            color: var(--text-muted); border-top: 1px solid var(--border);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .tab-content { display: none !important; }
+            #tab-report { display: block !important; }
+            #print-report-sheet {
+                border: none !important; box-shadow: none !important;
+                background: #fff !important; color: #000 !important; padding: 0 !important;
+            }
+            .input, .textarea, .select { border: 1px solid #94a3b8 !important; color: #000 !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Всплывающее уведомление Toast -->
+    <div id="toast">Готово!</div>
+
+    <!-- Шапка портала -->
+    <header id="main-header" class="no-print">
+        <div class="container header-inner">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-logo" aria-hidden="true">
+                        <!-- Inline SVG: Микрочип -->
+                        <svg class="icon" style="width:26px;height:26px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                            <rect x="9" y="9" width="6" height="6"></rect>
+                            <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"></path>
+                        </svg>
+                    </div>
+                    <div style="min-width:0;">
+                        <div class="badges">
+                            <span class="badge badge-cyan">
+                                <span class="lang-ru">Системное программное обеспечение • 3 курс</span>
+                                <span class="lang-kz hidden">Жүйелік программалық қамтамасыз ету • 3-курс</span>
+                            </span>
+                            <span class="badge badge-emerald">
+                                <span class="lang-ru">Пара 5 + Пара 6 (4 ак. ч) • Индивидуально</span>
+                                <span class="lang-kz hidden">5-жұп + 6-жұп (4 ак. сағ) • Жеке жұмыс</span>
+                            </span>
+                        </div>
+                        <h1 class="header-title">
+                            <span class="lang-ru">Лабораторная работа №5–6: Этапы старта ПК (<code>BIOS/UEFI</code>, <code>POST</code>, <code>MBR/GPT</code>) и Загрузчики ОС</span>
+                            <span class="lang-kz hidden">№5–6 Зертханалық жұмыс: ДК іске қосылу кезеңдері (<code>BIOS/UEFI</code>, <code>POST</code>, <code>MBR/GPT</code>) және ОЖ жүктеушілері</span>
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Панель управления -->
+                <div class="header-controls">
+                    <button class="btn btn-primary btn-sm" onclick="downloadThisHtml()">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span class="lang-ru">Скачать .html</span>
+                        <span class="lang-kz hidden">Жүктеу .html</span>
+                    </button>
+                    <div class="lang-switch" title="Язык / Тіл">
+                        <button id="lang-btn-ru" class="lang-btn active" onclick="setLanguage('ru')">RU</button>
+                        <button id="lang-btn-kz" class="lang-btn" onclick="setLanguage('kz')">KZ</button>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="theme-btn" onclick="toggleTheme()" title="Сменить тему / Тақырыпты ауыстыру">☀️</button>
+                </div>
+            </div>
+
+            <!-- Вкладки навигации -->
+            <nav class="tabs-nav">
+                <button id="btn-tab-lecture" class="tab-btn" onclick="switchTab('tab-lecture')">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    <span class="lang-ru">1. Полная лекция</span>
+                    <span class="lang-kz hidden">1. Толық дәріс</span>
+                </button>
+                <button id="btn-tab-pair5" class="tab-btn" onclick="switchTab('tab-pair5')">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                    <span class="lang-ru">2. Пара 5: BIOS/UEFI, POST и MBR/GPT</span>
+                    <span class="lang-kz hidden">2. 5-жұп: BIOS/UEFI, POST және MBR/GPT</span>
+                </button>
+                <button id="btn-tab-pair6" class="tab-btn" onclick="switchTab('tab-pair6')">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                    <span class="lang-ru">3. Пара 6: Загрузчики (WBM, GRUB, bcdedit)</span>
+                    <span class="lang-kz hidden">3. 6-жұп: Жүктеушілер (WBM, GRUB, bcdedit)</span>
+                </button>
+                <button id="btn-tab-test" class="tab-btn" onclick="switchTab('tab-test')">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <span class="lang-ru">4. Итоговый тест (20 вопросов)</span>
+                    <span class="lang-kz hidden">4. Қорытынды тест (20 сұрақ)</span>
+                </button>
+                <button id="btn-tab-report" class="tab-btn active" onclick="switchTab('tab-report')">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <span class="lang-ru">5. Отчет и Сдача</span>
+                    <span class="lang-kz hidden">5. Есеп және тапсыру</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- ===================================================================
+             ВКЛАДКА 1: ПОЛНАЯ ЛЕКЦИЯ
+             =================================================================== -->
+        <section id="tab-lecture" class="tab-content hidden">
+            <div class="hero-banner">
+                <span class="badge badge-cyan">
+                    <span class="lang-ru">Раздел 2 • Теоретический фундамент (Пары 5 и 6)</span>
+                    <span class="lang-kz hidden">2-бөлім • Теориялық негіз (5 және 6-жұптар)</span>
+                </span>
+                <h2>
+                    <span class="lang-ru">От нажатия кнопки Power до рабочего стола: полный путь загрузки ПК</span>
+                    <span class="lang-kz hidden">Power батырмасын басқаннан жұмыс үстеліне дейін: ДК жүктелуінің толық жолы</span>
+                </h2>
+                <p>
+                    <span class="lang-ru">Разберите всю цепочку старта компьютера: как блок питания будит процессор, что проверяет POST, чем UEFI+GPT превосходят устаревшие BIOS+MBR и как загрузчики Windows Boot Manager и GRUB2 управляют запуском ОС.</span>
+                    <span class="lang-kz hidden">Компьютердің іске қосылу тізбегін толық меңгеріңіз: қоректендіру блогы процессорды қалай оятады, POST нені тексереді, UEFI+GPT жүйесінің ескі BIOS+MBR-дан артықшылықтары және Windows Boot Manager мен GRUB2 жұмысы.</span>
+                </p>
+            </div>
+
+            <!-- 1. Интерактивный 6-этапный степпер старта ПК -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="step-num">1</div>
+                    <div>
+                        <h3>
+                            <span class="lang-ru">Цепочка старта ПК: 6 этапов передачи управления (нажмите на любой этап)</span>
+                            <span class="lang-kz hidden">ДК іске қосылу тізбегі: басқаруды берудің 6 кезеңі (кез келген кезеңді басыңыз)</span>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="stepper-grid" id="boot-stepper-btns">
+                    <button class="step-btn active" onclick="selectBootStep(0)" id="bstep-0">
+                        <span class="st-idx">STEP 01</span>
+                        <span class="st-lbl"><span class="lang-ru">БП и Power Good</span><span class="lang-kz hidden">ҚБ және Power Good</span></span>
+                    </button>
+                    <button class="step-btn" onclick="selectBootStep(1)" id="bstep-1">
+                        <span class="st-idx">STEP 02</span>
+                        <span class="st-lbl"><span class="lang-ru">Сброс CPU и SPI Flash</span><span class="lang-kz hidden">CPU және SPI Flash</span></span>
+                    </button>
+                    <button class="step-btn" onclick="selectBootStep(2)" id="bstep-2">
+                        <span class="st-idx">STEP 03</span>
+                        <span class="st-lbl"><span class="lang-ru">Самотест POST</span><span class="lang-kz hidden">POST өзін-өзі тексеру</span></span>
+                    </button>
+                    <button class="step-btn" onclick="selectBootStep(3)" id="bstep-3">
+                        <span class="st-idx">STEP 04</span>
+                        <span class="st-lbl"><span class="lang-ru">Разделы MBR / GPT</span><span class="lang-kz hidden">MBR / GPT кестесі</span></span>
+                    </button>
+                    <button class="step-btn" onclick="selectBootStep(4)" id="bstep-4">
+                        <span class="st-idx">STEP 05</span>
+                        <span class="st-lbl"><span class="lang-ru">Загрузчик ОС</span><span class="lang-kz hidden">ОЖ жүктеушісі</span></span>
+                    </button>
+                    <button class="step-btn" onclick="selectBootStep(5)" id="bstep-5">
+                        <span class="st-idx">STEP 06</span>
+                        <span class="st-lbl"><span class="lang-ru">Ядро ОС</span><span class="lang-kz hidden">ОЖ ядросы</span></span>
+                    </button>
+                </div>
+
+                <div id="boot-step-detail" class="step-detail-box"><div style="font-weight:800; font-size:0.98rem; margin-bottom:6px;">Этап 1: Блок питания (PSU) и сигнал Power Good</div><div style="font-size:0.9rem; color:var(--text-muted);">После нажатия кнопки Power блок питания подает стабилизированные напряжения (+3.3В, +5В, +12В) на материнскую плату. Когда напряжение выходит на норму, БП отправляет чипсету сигнал <strong>Power Good (PWR_OK)</strong> — это зеленый свет на снятие блокировки (Reset) с процессора.</div></div>
+            </div>
+
+            <!-- 2. Аналогия POST и индикаторы EZ Debug LED -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="step-num">2</div>
+                    <h3>
+                        <span class="lang-ru">Самотестирование <code>POST</code>: аналогия «Утреннее пробуждение и проверка пульса»</span>
+                        <span class="lang-kz hidden"><code>POST</code> өзін-өзі тексеруі: «Таңертең ояну және тамыр соғысын тексеру» аналогиясы</span>
+                    </h3>
+                </div>
+                <div class="grid-12">
+                    <div class="col-7">
+                        <p class="muted lang-ru" style="margin-bottom:10px;">
+                            <strong>POST (Power-On Self-Test)</strong> — это встроенная диагностическая программа в микросхеме BIOS/UEFI. Представьте, как вы просыпаетесь утром: прежде чем встать с кровати и пойти на пары, мозг за долю секунды проверяет, бьется ли сердце, двигаются ли руки и ноги, открылись ли глаза. Точно так же ПК до загрузки Windows проверяет: <strong>питание → процессор (CPU) → оперативную память (RAM) → видеокарту (VGA) → клавиатуру и диски (BOOT)</strong>.
+                        </p>
+                        <p class="muted lang-kz hidden" style="margin-bottom:10px;">
+                            <strong>POST (Power-On Self-Test)</strong> — BIOS/UEFI микросхемасындағы кіріктірілген диагностикалық бағдарлама. Таңертең оянған сәтті елестетіңіз: төсектен тұрмас бұрын ми жүректің соғуын, қол-аяқтың қозғалуын және тыныс алуды тексереді. ДК де дәл солай Windows жүктелмес бұрын: <strong>қоректену → процессор (CPU) → жедел жады (RAM) → бейнекарта (VGA) → пернетақта мен дискілерді (BOOT)</strong> тексереді.
+                        </p>
+                        <p class="muted lang-ru">
+                            Если на раннем этапе сломана память или видеокарта, <strong>монитор остается черным</strong> — система физически не может вывести текст ошибки на экран. Поэтому материнская плата общается с инженером двумя способами: через <strong>звуковые сигналы системного спикера (Beeper)</strong> или через <strong>светодиоды EZ Debug LED</strong>.
+                        </p>
+                        <p class="muted lang-kz hidden">
+                            Егер бастапқы кезеңде жедел жады немесе бейнекарта істен шықса, <strong>монитор қара күйінде қалады</strong> — жүйе экранға қате мәтінін шығара алмайды. Сондықтан аналық плата инженерге <strong>жүйелік спикердің дыбыстық сигналдары</strong> немесе <strong>EZ Debug LED шамдары</strong> арқылы хабар береді.
+                        </p>
+                    </div>
+                    <div class="col-5">
+                        <div class="callout callout-cyan" style="margin-top:0;">
+                            <span class="callout-title">💡 <span class="lang-ru">4 индикатора EZ Debug LED на современных платах:</span><span class="lang-kz hidden">Заманауи платалардағы 4 EZ Debug LED индикаторы:</span></span>
+                            <ul class="nice-list" style="margin-top:6px;">
+                                <li><strong>CPU:</strong> <span class="lang-ru">процессор не обнаружен, не подключено питание 8-pin или погнуты ножки сокета.</span><span class="lang-kz hidden">процессор табылмады, 8-pin қуаты қосылмаған немесе сокет аяқшалары майысқан.</span></li>
+                                <li><strong>DRAM:</strong> <span class="lang-ru">ошибка ОЗУ — окислились контакты планки, неверный слот или битый модуль.</span><span class="lang-kz hidden">ЖЖҚ қатесі — контактілер тотыққан, слот дұрыс емес немесе модуль ақаулы.</span></li>
+                                <li><strong>VGA:</strong> <span class="lang-ru">нет инициализации видеокарты, не вставлено доп. питание PCIe или неисправен GPU.</span><span class="lang-kz hidden">бейнекарта анықталмады, PCIe қосымша қуаты қосылмаған немесе GPU ақаулы.</span></li>
+                                <li><strong>BOOT:</strong> <span class="lang-ru">железо исправно, но не найден загрузочный диск/раздел с ОС.</span><span class="lang-kz hidden">темір дұрыс, бірақ ОЖ орнатылған жүктеу дискісі табылмады.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Сравнительная таблица: Legacy BIOS + MBR vs UEFI + GPT -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="step-num">3</div>
+                    <h3>
+                        <span class="lang-ru">Сравнение архитектур: <code>Legacy BIOS + MBR</code> против современного <code>UEFI + GPT</code></span>
+                        <span class="lang-kz hidden">Архитектураларды салыстыру: <code>Legacy BIOS + MBR</code> және заманауи <code>UEFI + GPT</code></span>
+                    </h3>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th><span class="lang-ru">Критерий</span><span class="lang-kz hidden">Критерий</span></th>
+                                <th>Legacy BIOS + MBR (1980-е)</th>
+                                <th>UEFI + GPT (Стандарт Windows 11)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong><span class="lang-ru">Максимальный размер диска</span><span class="lang-kz hidden">Дискінің макс. көлемі</span></strong></td>
+                                <td><span class="lang-ru">Ограничение <strong>2 ТБ</strong> (32-битная адресация секторов)</span><span class="lang-kz hidden"><strong>2 ТБ</strong> шектеуі (32-биттік сектор адрестеуі)</span></td>
+                                <td><span class="lang-ru">До <strong>9.4 ЗБ (зеттабайт)</strong> — 64-битная адресация</span><span class="lang-kz hidden"><strong>9.4 ЗБ (зеттабайт)</strong> дейін — 64-биттік адрестеу</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Количество разделов</span><span class="lang-kz hidden">Бөлімдер саны</span></strong></td>
+                                <td><span class="lang-ru">Максимум <strong>4 основных раздела</strong> (или 3 основных + 1 расширенный)</span><span class="lang-kz hidden">Ең көбі <strong>4 негізгі бөлім</strong> (немесе 3 негізгі + 1 кеңейтілген)</span></td>
+                                <td><span class="lang-ru">До <strong>128 основных разделов</strong> в Windows без «костылей»</span><span class="lang-kz hidden">Windows-та <strong>128 негізгі бөлімге</strong> дейін</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Режим работы и интерфейс</span><span class="lang-kz hidden">Жұмыс режимі және интерфейс</span></strong></td>
+                                <td><span class="lang-ru">16-битный реальный режим, только клавиатура, текстовый экран</span><span class="lang-kz hidden">16-биттік нақты режим, тек пернетақта, мәтіндік экран</span></td>
+                                <td><span class="lang-ru">32/64-битный режим, графика, поддержка <strong>мыши и сети</strong></span><span class="lang-kz hidden">32/64-биттік режим, графика, <strong>тінтуір мен желіні</strong> қолдау</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Хранение загрузчика</span><span class="lang-kz hidden">Жүктеушіні сақтау орны</span></strong></td>
+                                <td><span class="lang-ru">В первых <strong>512 байтах</strong> диска (Master Boot Record)</span><span class="lang-kz hidden">Дискінің алғашқы <strong>512 байтында</strong> (Master Boot Record)</span></td>
+                                <td><span class="lang-ru">Отдельный системный раздел <strong>ESP (FAT32)</strong> с файлами <code>.efi</code></span><span class="lang-kz hidden"><code>.efi</code> файлдары бар бөлек <strong>ESP (FAT32)</strong> жүйелік бөлімі</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Безопасность</span><span class="lang-kz hidden">Қауіпсіздік</span></strong></td>
+                                <td><span class="lang-ru">Отсутствует проверка подписи (уязвимо к буткитам)</span><span class="lang-kz hidden">Қолтаңбаны тексеру жоқ (буткиттерге осал)</span></td>
+                                <td><span class="lang-ru"><strong>Secure Boot</strong> — криптографическая проверка подписи загрузчика</span><span class="lang-kz hidden"><strong>Secure Boot</strong> — жүктеуші қолтаңбасын криптографиялық тексеру</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Отказоустойчивость таблицы</span><span class="lang-kz hidden">Кестенің сенімділігі</span></strong></td>
+                                <td><span class="lang-ru">Одна копия в начале диска; повреждение = потеря разделов</span><span class="lang-kz hidden">Диск басында тек бір көшірме; зақымдалуы = бөлімдерді жоғалту</span></td>
+                                <td><span class="lang-ru"><strong>Резервная копия GPT</strong> в конце диска + проверка целостности <strong>CRC32</strong></span><span class="lang-kz hidden">Диск соңында <strong>резервтік GPT көшірмесі</strong> + <strong>CRC32</strong> тексеруі</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4. Загрузчики ОС (Пара 6) -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="step-num">4</div>
+                    <h3>
+                        <span class="lang-ru">Загрузчики ОС: аналогия «Диспетчер на железнодорожной стрелке»</span>
+                        <span class="lang-kz hidden">ОЖ жүктеушілері: «Теміржол бағыттамасындағы диспетчер» аналогиясы</span>
+                    </h3>
+                </div>
+                <p class="muted lang-ru" style="margin-bottom:12px;">
+                    После того как UEFI проверил железо, он запускает <strong>загрузчик операционной системы</strong>. Загрузчик работает как железнодорожный диспетчер: если на компьютере стоят две системы (например, Windows 11 и Ubuntu Linux), он выводит меню выбора и переводит «стрелку» на нужный путь, загружая ядро выбранной ОС в оперативную память.
+                </p>
+                <p class="muted lang-kz hidden" style="margin-bottom:12px;">
+                    UEFI жабдықты тексергеннен кейін <strong>операциялық жүйенің жүктеушісін</strong> іске қосады. Жүктеуші теміржол диспетчері сияқты жұмыс істейді: егер компьютерде екі жүйе орнатылса (мысалы, Windows 11 және Ubuntu Linux), ол таңдау мәзірін шығарып, қажетті ОЖ ядросын жедел жадыға жүктейді.
+                </p>
+                <div class="grid-2">
+                    <div class="callout callout-cyan" style="margin-top:0;">
+                        <span class="callout-title">🪟 Windows Boot Manager (WBM)</span>
+                        <ul class="nice-list" style="margin-top:6px;">
+                            <li><span class="lang-ru">UEFI запускает <code>\EFI\Microsoft\Boot\bootmgfw.efi</code> из раздела ESP.</span><span class="lang-kz hidden">UEFI ESP бөлімінен <code>\EFI\Microsoft\Boot\bootmgfw.efi</code> файлын іске қосады.</span></li>
+                            <li><span class="lang-ru">WBM читает бинарную базу конфигурации <strong>BCD (Boot Configuration Data)</strong>.</span><span class="lang-kz hidden">WBM бинарлық <strong>BCD (Boot Configuration Data)</strong> конфигурация базасын оқиды.</span></li>
+                            <li><span class="lang-ru">Управление передается <code>winload.efi</code>, который загружает ядро <code>ntoskrnl.exe</code> и драйверы.</span><span class="lang-kz hidden">Басқару <code>winload.efi</code> файлына беріледі, ол <code>ntoskrnl.exe</code> ядросы мен драйверлерді жүктейді.</span></li>
+                        </ul>
+                    </div>
+                    <div class="callout callout-emerald" style="margin-top:0;">
+                        <span class="callout-title">🐧 Linux GRUB2 (GRand Unified Bootloader)</span>
+                        <ul class="nice-list" style="margin-top:6px;">
+                            <li><span class="lang-ru">UEFI запускает <code>\EFI\ubuntu\grubx64.efi</code> (или <code>shimx64.efi</code> при Secure Boot).</span><span class="lang-kz hidden">UEFI <code>\EFI\ubuntu\grubx64.efi</code> (Secure Boot кезінде <code>shimx64.efi</code>) файлын іске қосады.</span></li>
+                            <li><span class="lang-ru">Читает открытый текстовый конфиг <code>/boot/grub/grub.cfg</code> и понимает множество ФС (ext4, Btrfs, NTFS, FAT32).</span><span class="lang-kz hidden">Ашық мәтіндік <code>/boot/grub/grub.cfg</code> файлын оқиды және көптеген файлдық жүйелерді түсінеді.</span></li>
+                            <li><span class="lang-ru">Умеет запускать Linux (<code>vmlinuz</code> + <code>initramfs</code>) и передавать управление Windows через <strong>chainloading</strong>.</span><span class="lang-kz hidden">Linux ядросын (<code>vmlinuz</code>) іске қоса алады және <strong>chainloading</strong> арқылы Windows-ты жүктей алады.</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="callout callout-amber">
+                    <span class="callout-title">🛠️ <span class="lang-ru">Что делать, если «рельсы» (загрузчик) повреждены?</span><span class="lang-kz hidden">Егер жүктеу секторы («рельстер») зақымдалса не істеу керек?</span></span>
+                    <span class="lang-ru">Для Windows загружаются с установочной флешки (WinRE → Командная строка) и восстанавливают файлы EFI командой <code>bcdboot C:\Windows /s S: /f UEFI</code> (или в Legacy-режиме <code>bootrec /fixmbr</code> и <code>bootrec /fixboot</code>). Для Linux — загружаются с Live-USB, монтируют раздел и выполняют <code>grub-install</code> + <code>update-grub</code>.</span>
+                    <span class="lang-kz hidden">Windows үшін орнату флешкасынан (WinRE → Командалық жол) жүктеліп, <code>bcdboot C:\Windows /s S: /f UEFI</code> (Legacy режимінде <code>bootrec /fixboot</code>) командасымен қалпына келтіреді. Linux үшін Live-USB арқылы <code>grub-install</code> және <code>update-grub</code> орындалады.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             ВКЛАДКА 2: ПАРА 5 — BIOS/UEFI, POST И MBR/GPT
+             =================================================================== -->
+        <section id="tab-pair5" class="tab-content hidden">
+            <div class="hero-banner">
+                <span class="badge badge-cyan"><span class="lang-ru">Пара 5 (2 ак. ч) • Индивидуальная практика</span><span class="lang-kz hidden">5-жұп (2 ак. сағ) • Жеке практика</span></span>
+                <h2><span class="lang-ru">Диагностика POST (звук и LED), прошивка BIOS/UEFI и структура диска</span><span class="lang-kz hidden">POST диагностикасы (дыбыс және LED), BIOS/UEFI және диск құрылымы</span></h2>
+                <p><span class="lang-ru">Протестируйте реальные звуковые сигналы материнской платы, проведите аудит своего ПК и изучите таблицу кодов AMI / Award BIOS.</span><span class="lang-kz hidden">Аналық платаның нақты дыбыстық сигналдарын тексеріңіз, өз ДК аудитін жүргізіңіз және AMI / Award BIOS кестесін меңгеріңіз.</span></p>
+            </div>
+
+            <!-- Интерактивный тренажер: Диагност POST (Web Audio API + EZ Debug LED) -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="step-num">🔊</div>
+                    <div>
+                        <h3>
+                            <span class="lang-ru">Интерактивный тренажер «Диагност POST: Звук спикера и EZ Debug LED»</span>
+                            <span class="lang-kz hidden">«POST диагносты: Спикер дыбысы және EZ Debug LED» интерактивті тренажері</span>
+                        </h3>
+                        <p class="muted" style="font-size:0.84rem;">
+                            <span class="lang-ru">Нажмите на любой сценарий сбоя — сработает реальный генератор звука спикера (~800 Гц) и загорится нужный диод на плате.</span>
+                            <span class="lang-kz hidden">Кез келген ақау сценарийін басыңыз — нақты спикер дыбысы (~800 Гц) ойнап, платадағы тиісті диод жанады.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="sim-box">
+                    <!-- Визуальная панель материнской платы (EZ Debug LED) -->
+                    <div class="mobo-panel">
+                        <div>
+                            <div style="font-size:11px; color:#64748b; font-family:var(--font-mono); margin-bottom:8px;">MOTHERBOARD // EZ DEBUG LED STRIP</div>
+                            <div class="led-strip">
+                                <div class="led-unit"><div id="led-cpu" class="led-bulb"></div><span class="led-label">CPU</span></div>
+                                <div class="led-unit"><div id="led-dram" class="led-bulb"></div><span class="led-label">DRAM</span></div>
+                                <div class="led-unit"><div id="led-vga" class="led-bulb on-red"></div><span class="led-label">VGA</span></div>
+                                <div class="led-unit"><div id="led-boot" class="led-bulb"></div><span class="led-label">BOOT</span></div>
+                                <div class="led-unit"><div id="led-ok" class="led-bulb"></div><span class="led-label">PWR OK</span></div>
+                            </div>
+                        </div>
+                        <div class="beep-wave" id="post-wave-label">SIGNAL: ━━ • • (1 LONG + 2 SHORT — AWARD)</div>
+                    </div>
+
+                    <!-- Кнопки сценариев -->
+                    <div class="post-btn-grid">
+                        <button class="post-scenario-btn" id="pbtn-ok" onclick="playPostScenario('ok')">
+                            <span>✅ <span class="lang-ru">1 короткий (AMI / Award)</span><span class="lang-kz hidden">1 қысқа (AMI / Award)</span></span>
+                            <small>Pattern: • (150ms)</small>
+                        </button>
+                        <button class="post-scenario-btn" id="pbtn-ram" onclick="playPostScenario('ram')">
+                            <span>🧠 <span class="lang-ru">3 коротких (AMI BIOS)</span><span class="lang-kz hidden">3 қысқа (AMI BIOS)</span></span>
+                            <small>Pattern: • • •</small>
+                        </button>
+                        <button class="post-scenario-btn active" id="pbtn-vga-award" onclick="playPostScenario('vga_award')">
+                            <span>🖥️ <span class="lang-ru">1 длинный + 2 коротких (Award)</span><span class="lang-kz hidden">1 ұзын + 2 қысқа (Award)</span></span>
+                            <small>Pattern: ━━ • •</small>
+                        </button>
+                        <button class="post-scenario-btn" id="pbtn-vga-ami" onclick="playPostScenario('vga_ami')">
+                            <span>🎮 <span class="lang-ru">1 длинный + 3 коротких (AMI)</span><span class="lang-kz hidden">1 ұзын + 3 қысқа (AMI)</span></span>
+                            <small>Pattern: ━━ • • •</small>
+                        </button>
+                        <button class="post-scenario-btn" id="pbtn-cpu" onclick="playPostScenario('cpu')">
+                            <span>⚙️ <span class="lang-ru">5 коротких (AMI BIOS)</span><span class="lang-kz hidden">5 қысқа (AMI BIOS)</span></span>
+                            <small>Pattern: • • • • •</small>
+                        </button>
+                        <button class="post-scenario-btn" id="pbtn-cont" onclick="playPostScenario('cont')">
+                            <span>⚡ <span class="lang-ru">Непрерывный сигнал (Award/AMI)</span><span class="lang-kz hidden">Үздіксіз сигнал (Award/AMI)</span></span>
+                            <small>Pattern: ━━━━━━━━━━</small>
+                        </button>
+                    </div>
+
+                    <!-- Диагностическое заключение -->
+                    <div id="post-diag-box" class="callout callout-rose" style="margin-top:0;"><strong>Диагноз (Award BIOS): Неисправность или отсутствие видеокарты (VGA).</strong><br><strong>Действия инженера:</strong> проверьте плотность посадки видеокарты в слоте PCIe x16, кабель доп. питания 6/8-pin и кабель монитора.</div>
+                </div>
+            </div>
+
+            <!-- Практическое задание 5.1 -->
+            <div class="card">
+                <div class="badges" style="margin-bottom:8px;">
+                    <span class="badge badge-cyan"><span class="lang-ru">Задание 5.1 • Индивидуальный аудит ПК</span><span class="lang-kz hidden">5.1-тапсырма • Өз ДК жеке аудиті</span></span>
+                </div>
+                <h3 style="margin-bottom:12px;">
+                    <span class="lang-ru">Исследование прошивки BIOS/UEFI и стиля разделов диска на вашем компьютере</span>
+                    <span class="lang-kz hidden">Компьютеріңіздегі BIOS/UEFI прошивкасы мен диск бөлімдерінің стилін зерттеу</span>
+                </h3>
+                <ol class="nice-list" style="margin-bottom:14px;">
+                    <li>
+                        <span class="lang-ru"><strong>Шаг 1 (Проверка прошивки):</strong> Нажмите <code>Win + R</code>, введите <code>msinfo32</code> и нажмите Enter. В разделе «Сведения о системе» найдите и запишите в отчет 3 строки: <strong>«Режим BIOS»</strong> (UEFI или Устаревший), <strong>«Версия BIOS»</strong> и <strong>«Состояние безопасной загрузки»</strong> (Secure Boot: Вкл / Выкл).</span>
+                        <span class="lang-kz hidden"><strong>1-қадам (Прошивканы тексеру):</strong> <code>Win + R</code> басып, <code>msinfo32</code> теріңіз. «Жүйе туралы мәліметтер» бөлімінен 3 жолды есепке жазыңыз: <strong>«BIOS режимі»</strong> (UEFI немесе Ескірген), <strong>«BIOS нұсқасы»</strong> және <strong>«Қауіпсіз жүктеу күйі»</strong> (Secure Boot).</span>
+                    </li>
+                    <li>
+                        <span class="lang-ru"><strong>Шаг 2 (Проверка MBR или GPT):</strong> Откройте Управление дисками (<code>Win + R</code> → <code>diskmgmt.msc</code>), нажмите правой кнопкой по <strong>«Диск 0»</strong> → Свойства → вкладка <strong>«Тома»</strong> → строка «Стиль раздела». <em>Либо</em> выполните быструю команду в PowerShell:</span>
+                        <span class="lang-kz hidden"><strong>2-қадам (MBR немесе GPT тексеру):</strong> Дискілерді басқаруды ашыңыз (<code>Win + R</code> → <code>diskmgmt.msc</code>), <strong>«Диск 0»</strong> → Сипаттары → <strong>«Томдар»</strong> бетінде «Бөлім стилі» жолын қараңыз. <em>Немесе</em> PowerShell-де төмендегі команданы орындаңыз:</span>
+                    </li>
+                </ol>
+                <div class="cmd-box">
+                    <span id="cmd-get-disk">Get-Disk | Format-Table Number, FriendlyName, PartitionStyle, Size</span>
+                    <button class="btn btn-primary btn-sm" onclick="copyById('cmd-get-disk')">📋 <span class="lang-ru">Копировать</span><span class="lang-kz hidden">Көшіру</span></button>
+                </div>
+            </div>
+
+            <!-- Практическое задание 5.2 -->
+            <div class="card">
+                <div class="badges" style="margin-bottom:8px;">
+                    <span class="badge badge-amber"><span class="lang-ru">Задание 5.2 • Самостоятельная работа (1 ч)</span><span class="lang-kz hidden">5.2-тапсырма • Өздік жұмыс (1 сағ)</span></span>
+                </div>
+                <h3 style="margin-bottom:10px;">
+                    <span class="lang-ru">Справочно-аналитическая таблица звуковых сигналов POST (AMI и Award BIOS)</span>
+                    <span class="lang-kz hidden">POST дыбыстық сигналдарын талдау кестесі (AMI және Award BIOS)</span>
+                </h3>
+                <p class="muted lang-ru">Изучите соответствие сигналов для двух самых распространенных прошивок. На вкладке «5. Отчет и Сдача» зафиксируйте расшифровку минимум 3 типовых сбоев своими словами.</p>
+                <p class="muted lang-kz hidden">Ең көп таралған екі прошивканың сигналдарын зерттеңіз. «5. Есеп және тапсыру» бөлімінде кемінде 3 типтік ақаудың сипаттамасын өз сөзіңізбен жазыңыз.</p>
+
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th><span class="lang-ru">Узел ПК</span><span class="lang-kz hidden">ДК түйіні</span></th>
+                                <th>AMI BIOS</th>
+                                <th>Award BIOS</th>
+                                <th><span class="lang-ru">Действия инженера</span><span class="lang-kz hidden">Инженер әрекеті</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong><span class="lang-ru">Норма (OK)</span><span class="lang-kz hidden">Қалыпты (OK)</span></strong></td>
+                                <td>1 <span class="lang-ru">короткий</span><span class="lang-kz hidden">қысқа</span></td>
+                                <td>1 <span class="lang-ru">короткий</span><span class="lang-kz hidden">қысқа</span></td>
+                                <td><span class="lang-ru">Ошибок нет, передача управления загрузчику.</span><span class="lang-kz hidden">Қате жоқ, басқару жүктеушіге беріледі.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">ОЗУ (RAM)</span><span class="lang-kz hidden">ЖЖҚ (RAM)</span></strong></td>
+                                <td>2 <span class="lang-ru">или</span><span class="lang-kz hidden">не</span> 3 <span class="lang-ru">коротких</span><span class="lang-kz hidden">қысқа</span></td>
+                                <td><span class="lang-ru">Повторяющиеся длинные</span><span class="lang-kz hidden">Қайталанатын ұзын</span></td>
+                                <td><span class="lang-ru">Вытащить планки, очистить контакты ластиком, проверить по одной.</span><span class="lang-kz hidden">Планкаларды суырып, контактілерін тазалап, бір-бірлеп тексеру.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Видеокарта (VGA)</span><span class="lang-kz hidden">Бейнекарта (VGA)</span></strong></td>
+                                <td>1 <span class="lang-ru">длинный</span> + 3 <span class="lang-ru">коротких</span> (8 <span class="lang-ru">кор.</span>)</td>
+                                <td>1 <span class="lang-ru">длинный</span> + 2 <span class="lang-ru">коротких</span></td>
+                                <td><span class="lang-ru">Переподключить карту в слоте PCIe x16 и кабель доп. питания.</span><span class="lang-kz hidden">Картаны PCIe x16 слотына және қосымша қуат кабелін қайта қосу.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Процессор (CPU)</span><span class="lang-kz hidden">Процессор (CPU)</span></strong></td>
+                                <td>5 <span class="lang-ru">коротких</span></td>
+                                <td><span class="lang-ru">Повторяющиеся короткие / сирена</span><span class="lang-kz hidden">Қайталанатын қысқа / сирена</span></td>
+                                <td><span class="lang-ru">Проверить питание CPU 4/8-pin, перегрев кулера, контакты сокета.</span><span class="lang-kz hidden">CPU 4/8-pin қуатын, кулер қызуын, сокет контактілерін тексеру.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">БП / Мат. плата</span><span class="lang-kz hidden">ҚБ / Аналық плата</span></strong></td>
+                                <td><span class="lang-ru">Непрерывный / 4 коротких</span><span class="lang-kz hidden">Үздіксіз / 4 қысқа</span></td>
+                                <td><span class="lang-ru">Непрерывный / нет сигнала</span><span class="lang-kz hidden">Үздіксіз / сигнал жоқ</span></td>
+                                <td><span class="lang-ru">Проверить напряжения БП (+12В, +5В, +3.3В) и батарейку CMOS.</span><span class="lang-kz hidden">ҚБ кернеулерін (+12В, +5В, +3.3В) және CMOS батарейкасын тексеру.</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             ВКЛАДКА 3: ПАРА 6 — ЗАГРУЗЧИКИ (WBM, GRUB, BCDEDIT)
+             =================================================================== -->
+        <section id="tab-pair6" class="tab-content hidden">
+            <div class="hero-banner">
+                <span class="badge badge-indigo"><span class="lang-ru">Пара 6 (2 ак. ч) • Индивидуальная практика</span><span class="lang-kz hidden">6-жұп (2 ак. сағ) • Жеке практика</span></span>
+                <h2><span class="lang-ru">Загрузчики ОС: Windows Boot Manager, GRUB2, <code>msconfig</code> и <code>bcdedit</code></span><span class="lang-kz hidden">ОЖ жүктеушілері: Windows Boot Manager, GRUB2, <code>msconfig</code> және <code>bcdedit</code></span></h2>
+                <p><span class="lang-ru">Освойте структуру базы BCD, научитесь читать вывод <code>bcdedit</code>, безопасно проверять параметры загрузки и сравните WBM с GRUB2.</span><span class="lang-kz hidden">BCD базасының құрылымын, <code>bcdedit</code> нәтижесін оқуды, жүктеу параметрлерін қауіпсіз тексеруді және WBM мен GRUB2 салыстыруды меңгеріңіз.</span></p>
+            </div>
+
+            <!-- Интерактивный симулятор: Инспектор bcdedit и Стрелка загрузки -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="step-num">🚆</div>
+                    <div>
+                        <h3>
+                            <span class="lang-ru">Интерактивный симулятор «Инспектор <code>bcdedit</code> и Стрелка загрузки»</span>
+                            <span class="lang-kz hidden">«<code>bcdedit</code> инспекторы және Жүктеу бағыттамасы» интерактивті симуляторы</span>
+                        </h3>
+                        <p class="muted" style="font-size:0.84rem;">
+                            <span class="lang-ru">Меняйте параметры ниже — в реальном времени обновляется консольный вывод <code>bcdedit /enum</code> и экран выбора ОС.</span>
+                            <span class="lang-kz hidden">Төмендегі параметрлерді өзгертіңіз — нақты уақытта <code>bcdedit /enum</code> консолі мен ОЖ таңдау экраны жаңарады.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="sim-box">
+                    <div class="form-row">
+                        <div class="field">
+                            <label><span class="lang-ru">Тайм-аут меню (timeout):</span><span class="lang-kz hidden">Мәзір тайм-ауты (timeout):</span></label>
+                            <select id="bcd-timeout" class="select" onchange="updateBcdSim()">
+                                <option value="3">3 сек (Быстрый старт)</option>
+                                <option value="10" selected="">10 сек (Оптимально)</option>
+                                <option value="30">30 сек (По умолчанию Windows)</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label><span class="lang-ru">ОС по умолчанию (default):</span><span class="lang-kz hidden">Әдепкі ОЖ (default):</span></label>
+                            <select id="bcd-os" class="select" onchange="updateBcdSim()">
+                                <option value="win" selected="">Windows 11 Pro (Windows Boot Manager)</option>
+                                <option value="linux">Ubuntu 24.04 LTS (GNU GRUB 2.06)</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label><span class="lang-ru">Режим загрузки (safeboot):</span><span class="lang-kz hidden">Жүктеу режимі (safeboot):</span></label>
+                            <select id="bcd-mode" class="select" onchange="updateBcdSim()">
+                                <option value="normal" selected="">Normal (Обычный запуск)</option>
+                                <option value="minimal">Safe Mode Minimal (safeboot minimal)</option>
+                                <option value="network">Safe Mode + Network (safeboot network)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-12">
+                        <div class="col-6">
+                            <div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:6px;">
+                                💻 C:\Windows\System32&gt; bcdedit /enum
+                            </div>
+                            <pre id="bcd-console" class="console-box" style="min-height:235px; color:#38bdf8;">Windows Boot Manager
+--------------------
+identifier              {bootmgr}
+device                  partition=\Device\HarddiskVolume1 (ESP FAT32)
+path                    \EFI\Microsoft\Boot\bootmgfw.efi
+description             Windows Boot Manager
+default                 {current}
+displayorder            {current}
+                        {ubuntu-grub-efi}
+timeout                 10
+
+Windows Boot Loader
+-------------------
+identifier              {current}
+device                  partition=C:
+path                    \Windows\system32\winload.efi
+description             Windows 11 Pro
+osdevice                partition=C:
+systemroot              \Windows
+nx                      OptIn
+
+Firmware Application (Linux)
+----------------------------
+identifier              {ubuntu-grub-efi}
+path                    \EFI\ubuntu\grubx64.efi
+description             Ubuntu 24.04 LTS (GNU GRUB 2.06)</pre>
+                        </div>
+                        <div class="col-6">
+                            <div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:6px;">
+                                🖥️ <span class="lang-ru">Визуальный экран выбора ОС при старте:</span><span class="lang-kz hidden">Іске қосу кезіндегі ОЖ таңдау экраны:</span>
+                            </div>
+                            <div id="boot-visual-screen" class="boot-screen wbm-theme">
+                    <div>
+                        <div style="font-size:17px; font-weight:700; margin-bottom:14px;">
+                            Выберите операционную систему
+                        </div>
+                        <div class="boot-item selected">🪟 Windows 11 Pro <span style="float:right; font-size:11px; opacity:0.9;">[Обычный режим]</span></div>
+                        <div class="boot-item">🐧 Ubuntu 24.04 LTS (via UEFI / GRUB2)</div>
+                    </div>
+                    <div style="font-size:11px; opacity:0.85; border-top:1px solid rgba(255,255,255,0.2); padding-top:10px;">
+                        Автоматический запуск по умолчанию через: <strong>10 sec</strong>
+                    </div>
+                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Практическое задание 6.1 -->
+            <div class="card">
+                <div class="badges" style="margin-bottom:8px;">
+                    <span class="badge badge-indigo"><span class="lang-ru">Задание 6.1 • Безопасное исследование (Режим чтения)</span><span class="lang-kz hidden">6.1-тапсырма • Қауіпсіз зерттеу (Оқу режимі)</span></span>
+                </div>
+                <h3 style="margin-bottom:10px;">
+                    <span class="lang-ru">Изучение параметров загрузки через <code>msconfig</code> и утилиту <code>bcdedit</code></span>
+                    <span class="lang-kz hidden"><code>msconfig</code> және <code>bcdedit</code> утилитасы арқылы жүктеу параметрлерін зерттеу</span>
+                </h3>
+                <div class="callout callout-rose" style="margin-top:0; margin-bottom:14px;">
+                    <span class="callout-title">⚠️ <span class="lang-ru">Техника безопасности в учебном классе:</span><span class="lang-kz hidden">Оқу кабинетіндегі қауіпсіздік техникасы:</span></span>
+                    <span class="lang-ru">В окне <code>msconfig</code> просматривайте параметры только в <strong>режиме ознакомления</strong>. НЕ сохраняйте изменения (не нажимайте «Применить» на параметрах «Безопасный режим» или «Максимум памяти») на учебном ПК без разрешения преподавателя!</span>
+                    <span class="lang-kz hidden"><code>msconfig</code> терезесінде параметрлерді тек <strong>танысу режимінде</strong> қараңыз. Оқытушының рұқсатынсыз оқу компьютерінде өзгерістерді сақтамаңыз!</span>
+                </div>
+
+                <ol class="nice-list" style="margin-bottom:14px;">
+                    <li><span class="lang-ru">Откройте <code>Win + R</code> → <code>msconfig</code> → вкладка <strong>«Загрузка» (Boot)</strong>. Посмотрите название текущей ОС, значение <strong>«Тайм-аут»</strong> (в секундах) и опции блока «Безопасный режим» (Минимальная / Сеть).</span><span class="lang-kz hidden"><code>Win + R</code> → <code>msconfig</code> → <strong>«Жүктеу» (Boot)</strong> бетін ашыңыз. Ағымдағы ОЖ атауын, <strong>«Тайм-аут»</strong> мәнін және «Қауіпсіз режим» опцияларын қараңыз.</span></li>
+                    <li><span class="lang-ru">Откройте терминал (CMD или PowerShell от имени администратора) и выполните команды ниже в режиме чтения (если на ПК нет прав администратора — разберите вывод на интерактивном симуляторе выше):</span><span class="lang-kz hidden">Терминалды (әкімші атынан CMD немесе PowerShell) ашып, төмендегі командаларды оқу режимінде орындаңыз:</span></li>
+                </ol>
+
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <div class="cmd-box">
+                        <span id="cmd-bcd1">bcdedit</span>
+                        <button class="btn btn-primary btn-sm" onclick="copyById('cmd-bcd1')">📋 Copy</button>
+                    </div>
+                    <div class="cmd-box">
+                        <span id="cmd-bcd2">bcdedit /enum firmware</span>
+                        <button class="btn btn-primary btn-sm" onclick="copyById('cmd-bcd2')">📋 Copy</button>
+                    </div>
+                    <div class="cmd-box">
+                        <span id="cmd-reagent">reagentc /info</span>
+                        <button class="btn btn-primary btn-sm" onclick="copyById('cmd-reagent')">📋 Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Практическое задание 6.2 -->
+            <div class="card">
+                <div class="badges" style="margin-bottom:8px;">
+                    <span class="badge badge-amber"><span class="lang-ru">Задание 6.2 • Самостоятельная работа (1 ч)</span><span class="lang-kz hidden">6.2-тапсырма • Өздік жұмыс (1 сағ)</span></span>
+                </div>
+                <h3 style="margin-bottom:10px;">
+                    <span class="lang-ru">Аналитическое сравнение Windows Boot Manager и Linux GRUB2</span>
+                    <span class="lang-kz hidden">Windows Boot Manager және Linux GRUB2 аналитикалық салыстыруы</span>
+                </h3>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th><span class="lang-ru">Критерий</span><span class="lang-kz hidden">Критерий</span></th>
+                                <th>Windows Boot Manager (WBM)</th>
+                                <th>GNU GRUB2 (Linux)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong><span class="lang-ru">Поддерживаемые ОС</span><span class="lang-kz hidden">Қолдайтын ОЖ</span></strong></td>
+                                <td><span class="lang-ru">В основном семейство Windows (другие ОС — сложно через сторонние утилиты)</span><span class="lang-kz hidden">Негізінен Windows отбасы (басқа ОЖ-ні қосу күрделі)</span></td>
+                                <td><span class="lang-ru">Мультиплатформенный: Linux, Windows, BSD, macOS, ISO-образы</span><span class="lang-kz hidden">Мультиплатформалық: Linux, Windows, BSD, macOS, ISO-бейнелер</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Формат конфигурации</span><span class="lang-kz hidden">Конфигурация форматы</span></strong></td>
+                                <td><span class="lang-ru">Бинарный куст реестра <strong>BCD</strong> (редактируется через <code>bcdedit</code>)</span><span class="lang-kz hidden">Бинарлық <strong>BCD</strong> реестр базасы (<code>bcdedit</code> арқылы өңделеді)</span></td>
+                                <td><span class="lang-ru">Открытый текстовый файл <code>/boot/grub/grub.cfg</code> (<code>/etc/default/grub</code>)</span><span class="lang-kz hidden">Ашық мәтіндік <code>/boot/grub/grub.cfg</code> файлы</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Файловые системы</span><span class="lang-kz hidden">Файлдық жүйелер</span></strong></td>
+                                <td>FAT32 (ESP), NTFS, ReFS</td>
+                                <td>ext2/3/4, Btrfs, XFS, ZFS, FAT32, NTFS, ISO9660</td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Работа в Dual-Boot</span><span class="lang-kz hidden">Dual-Boot жұмысы</span></strong></td>
+                                <td><span class="lang-ru">Не видит Linux автоматически; обновления Windows иногда перезаписывают приоритет UEFI</span><span class="lang-kz hidden">Linux-ты автоматты көрмейді; Windows жаңартулары UEFI ретін ауыстыруы мүмкін</span></td>
+                                <td><span class="lang-ru">Автоматически находит Windows через <code>os-prober</code> и запускает её (chainloading)</span><span class="lang-kz hidden"><code>os-prober</code> арқылы Windows-ты автоматты тауып іске қосады (chainloading)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Восстановление при сбое</span><span class="lang-kz hidden">Ақау кезінде қалпына келтіру</span></strong></td>
+                                <td><span class="lang-ru">Среда WinRE: <code>bcdboot</code>, <code>bootrec</code></span><span class="lang-kz hidden">WinRE ортасы: <code>bcdboot</code>, <code>bootrec</code></span></td>
+                                <td><span class="lang-ru">Встроенная консоль <code>grub rescue&gt;</code> или Live-USB (<code>grub-install</code>)</span><span class="lang-kz hidden">Кіріктірілген <code>grub rescue&gt;</code> консолі немесе Live-USB</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="lang-ru">Интерфейс</span><span class="lang-kz hidden">Интерфейс</span></strong></td>
+                                <td><span class="lang-ru">Современное графическое меню Metro (поддержка мыши и тачскрина)</span><span class="lang-kz hidden">Заманауи Metro графикалық мәзірі (тінтуірді қолдайды)</span></td>
+                                <td><span class="lang-ru">Классическое консольное меню (поддерживает кастомные графические темы)</span><span class="lang-kz hidden">Классикалық консольдік мәзір (графикалық тақырыптар қоюға болады)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             ВКЛАДКА 4: ИТОГОВЫЙ ТЕСТ (20 ВОПРОСОВ)
+             =================================================================== -->
+        <section id="tab-test" class="tab-content hidden">
+            <div class="card" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
+                <div>
+                    <h3>📝 <span class="lang-ru">Итоговый тест: 20 вопросов (Пары 5 и 6)</span><span class="lang-kz hidden">Қорытынды тест: 20 сұрақ (5 және 6-жұптар)</span></h3>
+                    <p class="muted" style="font-size:0.86rem; margin-top:4px;">
+                        <span class="lang-ru">Внимательно прочитайте каждый вопрос. После проверки результат автоматически перенесется во вкладку «5. Отчет и Сдача».</span>
+                        <span class="lang-kz hidden">Әр сұрақты мұқият оқыңыз. Тексеруден кейін нәтиже «5. Есеп және тапсыру» бөліміне автоматты түрде жазылады.</span>
+                    </p>
+                </div>
+                <div id="test-score-badge" class="badge badge-cyan" style="font-size:14px; padding:8px 14px;">
+                    <span class="lang-ru">Не завершен</span><span class="lang-kz hidden">Аяқталмаған</span>
+                </div>
+            </div>
+
+            <div id="quiz-container" style="display:flex; flex-direction:column; gap:14px;"><div class="quiz-card"><div class="quiz-q">1. Какой сигнал блок питания отправляет материнской плате после стабилизации напряжений?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_0" value="0" onchange="userAnswers[0] = 0">
+                            <span>Сигнал Power Good (PWR_OK)</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_0" value="1" onchange="userAnswers[0] = 1">
+                            <span>Сигнал прерывания клавиатуры</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_0" value="2" onchange="userAnswers[0] = 2">
+                            <span>Сигнал загрузки ядра ОС</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_0" value="3" onchange="userAnswers[0] = 3">
+                            <span>Сигнал очистки таблицы GPT</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">2. В какой микросхеме на материнской плате хранится прошивка BIOS или UEFI?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_1" value="0" onchange="userAnswers[1] = 0">
+                            <span>В кэш-памяти L3 процессора</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_1" value="1" onchange="userAnswers[1] = 1">
+                            <span>В энергонезависимой SPI Flash</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_1" value="2" onchange="userAnswers[1] = 2">
+                            <span>В оперативной памяти DDR4</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_1" value="3" onchange="userAnswers[1] = 3">
+                            <span>В первом секторе жесткого диска</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">3. Что означает аббревиатура POST на начальном этапе включения компьютера?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_2" value="0" onchange="userAnswers[2] = 0">
+                            <span>Панель настройки сетевых портов</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_2" value="1" onchange="userAnswers[2] = 1">
+                            <span>Протокол обмена системных таблиц</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_2" value="2" onchange="userAnswers[2] = 2">
+                            <span>Самотестирование при включении</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_2" value="3" onchange="userAnswers[2] = 3">
+                            <span>Программа очистки системных томов</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">4. О чем свидетельствует 1 короткий звуковой сигнал спикера в AMI и Award BIOS?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_3" value="0" onchange="userAnswers[3] = 0">
+                            <span>Обнаружена ошибка видеокарты</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_3" value="1" onchange="userAnswers[3] = 1">
+                            <span>Отсутствует модуль оперативной памяти</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_3" value="2" onchange="userAnswers[3] = 2">
+                            <span>Не подключен загрузочный накопитель</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_3" value="3" onchange="userAnswers[3] = 3">
+                            <span>Тестирование POST пройдено успешно</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">5. На какую неисправность указывают 3 коротких сигнала в прошивке AMI BIOS?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_4" value="0" onchange="userAnswers[4] = 0">
+                            <span>Ошибка базовой оперативной памяти</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_4" value="1" onchange="userAnswers[4] = 1">
+                            <span>Ошибка контроллера сетевой карты</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_4" value="2" onchange="userAnswers[4] = 2">
+                            <span>Ошибка отсутствия мыши в порту USB</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_4" value="3" onchange="userAnswers[4] = 3">
+                            <span>Ошибка перегрева жесткого диска</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">6. Какая комбинация сигналов в Award BIOS сообщает о неисправности видеокарты?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_5" value="0" onchange="userAnswers[5] = 0">
+                            <span>Пять коротких сигналов подряд</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_5" value="1" onchange="userAnswers[5] = 1">
+                            <span>Один длинный и два коротких</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_5" value="2" onchange="userAnswers[5] = 2">
+                            <span>Два коротких сигнала подряд</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_5" value="3" onchange="userAnswers[5] = 3">
+                            <span>Один короткий и три длинных</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">7. Что означает горящий светодиод BOOT на панели EZ Debug LED материнской платы?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_6" value="0" onchange="userAnswers[6] = 0">
+                            <span>Вышел из строя центральный процессор</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_6" value="1" onchange="userAnswers[6] = 1">
+                            <span>Повреждена планка оперативной памяти</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_6" value="2" onchange="userAnswers[6] = 2">
+                            <span>Не найдено устройство загрузки с ОС</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_6" value="3" onchange="userAnswers[6] = 3">
+                            <span>Не подключено питание видеокарты</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">8. Каков максимальный поддерживаемый объем диска для таблицы разделов MBR?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_7" value="0" onchange="userAnswers[7] = 0">
+                            <span>Ограничение составляет 512 ГБ</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_7" value="1" onchange="userAnswers[7] = 1">
+                            <span>Ограничение составляет 16 ТБ</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_7" value="2" onchange="userAnswers[7] = 2">
+                            <span>Ограничение составляет 128 ТБ</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_7" value="3" onchange="userAnswers[7] = 3">
+                            <span>Ограничение составляет 2 ТБ</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">9. Сколько основных разделов максимально допускает классическая таблица MBR?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_8" value="0" onchange="userAnswers[8] = 0">
+                            <span>Не более 4 основных разделов</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_8" value="1" onchange="userAnswers[8] = 1">
+                            <span>Не более 16 основных разделов</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_8" value="2" onchange="userAnswers[8] = 2">
+                            <span>Не более 64 основных разделов</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_8" value="3" onchange="userAnswers[8] = 3">
+                            <span>Не более 128 основных разделов</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">10. Сколько основных разделов поддерживает стандарт GPT в операционной системе Windows?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_9" value="0" onchange="userAnswers[9] = 0">
+                            <span>Ровно 4 основных раздела</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_9" value="1" onchange="userAnswers[9] = 1">
+                            <span>До 128 основных разделов</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_9" value="2" onchange="userAnswers[9] = 2">
+                            <span>Не более 8 основных разделов</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_9" value="3" onchange="userAnswers[9] = 3">
+                            <span>Ровно 2 основных раздела</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">11. В какой файловой системе должен быть отформатирован системный раздел ESP для UEFI?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_10" value="0" onchange="userAnswers[10] = 0">
+                            <span>В файловой системе NTFS</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_10" value="1" onchange="userAnswers[10] = 1">
+                            <span>В файловой системе ext4</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_10" value="2" onchange="userAnswers[10] = 2">
+                            <span>В файловой системе FAT32</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_10" value="3" onchange="userAnswers[10] = 3">
+                            <span>В файловой системе exFAT</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">12. Как таблица разделов GPT защищается от случайного повреждения данных в начале диска?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_11" value="0" onchange="userAnswers[11] = 0">
+                            <span>Шифрует все файлы паролем BIOS</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_11" value="1" onchange="userAnswers[11] = 1">
+                            <span>Запрещает запись на системный диск</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_11" value="2" onchange="userAnswers[11] = 2">
+                            <span>Сжимает разделы в архив ZIP</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_11" value="3" onchange="userAnswers[11] = 3">
+                            <span>Хранит резервную копию и CRC32</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">13. Какую главную функцию выполняет технология Secure Boot в современных прошивках UEFI?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_12" value="0" onchange="userAnswers[12] = 0">
+                            <span>Проверяет цифровую подпись загрузчика</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_12" value="1" onchange="userAnswers[12] = 1">
+                            <span>Ускоряет вращение вентиляторов ПК</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_12" value="2" onchange="userAnswers[12] = 2">
+                            <span>Увеличивает частоту оперативной памяти</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_12" value="3" onchange="userAnswers[12] = 3">
+                            <span>Очищает временные файлы браузера</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">14. Какая встроенная утилита Windows позволяет быстро увидеть «Режим BIOS» и статус Secure Boot?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_13" value="0" onchange="userAnswers[13] = 0">
+                            <span>Консоль управления calc.exe</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_13" value="1" onchange="userAnswers[13] = 1">
+                            <span>Сведения о системе msinfo32</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_13" value="2" onchange="userAnswers[13] = 2">
+                            <span>Блокнот системы notepad.exe</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_13" value="3" onchange="userAnswers[13] = 3">
+                            <span>Графический редактор mspaint</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">15. Какой файл является основным менеджером загрузки Windows на системах с UEFI?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_14" value="0" onchange="userAnswers[14] = 0">
+                            <span>Системный файл explorer.exe</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_14" value="1" onchange="userAnswers[14] = 1">
+                            <span>Системный файл cmd.exe</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_14" value="2" onchange="userAnswers[14] = 2">
+                            <span>Файл загрузчика bootmgfw.efi</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_14" value="3" onchange="userAnswers[14] = 3">
+                            <span>Файл драйвера nvlddmkm.sys</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">16. В каком файле или хранилище Windows Boot Manager хранит настройки и список систем?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_15" value="0" onchange="userAnswers[15] = 0">
+                            <span>В текстовом файле boot.txt</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_15" value="1" onchange="userAnswers[15] = 1">
+                            <span>В файле настроек grub.cfg</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_15" value="2" onchange="userAnswers[15] = 2">
+                            <span>В папке автозагрузки Startup</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_15" value="3" onchange="userAnswers[15] = 3">
+                            <span>В бинарной базе реестра BCD</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">17. Какая консольная утилита Windows предназначена для просмотра и редактирования базы BCD?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_16" value="0" onchange="userAnswers[16] = 0">
+                            <span>Утилита командной строки bcdedit</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_16" value="1" onchange="userAnswers[16] = 1">
+                            <span>Утилита проверки сети ipconfig</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_16" value="2" onchange="userAnswers[16] = 2">
+                            <span>Утилита мониторинга tasklist</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_16" value="3" onchange="userAnswers[16] = 3">
+                            <span>Утилита архивации compact</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">18. Где хранится основной сгенерированный конфигурационный файл загрузчика Linux GRUB2?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_17" value="0" onchange="userAnswers[17] = 0">
+                            <span>В каталоге C:\Windows\System32</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_17" value="1" onchange="userAnswers[17] = 1">
+                            <span>В текстовом файле /boot/grub/grub.cfg</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_17" value="2" onchange="userAnswers[17] = 2">
+                            <span>В скрытом реестре HKEY_LOCAL_MACHINE</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_17" value="3" onchange="userAnswers[17] = 3">
+                            <span>В файле подкачки /swapfile</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">19. Как называется механизм, с помощью которого GRUB2 передает управление загрузчику Windows?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_18" value="0" onchange="userAnswers[18] = 0">
+                            <span>Механизм разгона Overclocking</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_18" value="1" onchange="userAnswers[18] = 1">
+                            <span>Механизм дефрагментации диска</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_18" value="2" onchange="userAnswers[18] = 2">
+                            <span>Цепочечная загрузка Chainloading</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_18" value="3" onchange="userAnswers[18] = 3">
+                            <span>Сжатие оперативной памяти</span>
+                        </label>
+                    </div></div><div class="quiz-card"><div class="quiz-q">20. Какая команда среды восстановления Windows (WinRE) создает заново файлы загрузки UEFI в разделе ESP?</div><div class="quiz-opts">
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_19" value="0" onchange="userAnswers[19] = 0">
+                            <span>Команда очистки экрана cls</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_19" value="1" onchange="userAnswers[19] = 1">
+                            <span>Команда проверки пинга ping</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_19" value="2" onchange="userAnswers[19] = 2">
+                            <span>Команда просмотра папки dir</span>
+                        </label>
+                    
+                        <label class="quiz-opt">
+                            <input type="radio" name="q_19" value="3" onchange="userAnswers[19] = 3">
+                            <span>Команда восстановления bcdboot</span>
+                        </label>
+                    </div></div></div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <button class="btn btn-primary" onclick="submitQuiz()">✅ <span class="lang-ru">Проверить тест</span><span class="lang-kz hidden">Тестті тексеру</span></button>
+                <button class="btn btn-outline" onclick="resetQuiz()">🔄 <span class="lang-ru">Сбросить тест</span><span class="lang-kz hidden">Тестті тазарту</span></button>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             ВКЛАДКА 5: ОТЧЕТ И СДАЧА (С ПОДДЕРЖКОЙ IPHONE / SAFARI)
+             =================================================================== -->
+        <section id="tab-report" class="tab-content">
+            <div class="grid-12">
+                <div id="print-report-sheet" class="card col-7" style="display:flex; flex-direction:column; gap:14px;">
+                    <h3>📄 <span class="lang-ru">Индивидуальный отчет: Лабораторная работа №5–6 (СПО)</span><span class="lang-kz hidden">Жеке есеп: №5–6 Зертханалық жұмыс (ЖПҚЕ)</span></h3>
+
+                    <div class="grid-3">
+                        <div class="field">
+                            <label><span class="lang-ru">ФИО студента:</span><span class="lang-kz hidden">Студенттің аты-жөні:</span></label>
+                            <input type="text" id="rep-name" class="input" placeholder="Сериков Алихан">
+                        </div>
+                        <div class="field">
+                            <label><span class="lang-ru">Группа:</span><span class="lang-kz hidden">Тобы:</span></label>
+                            <input type="text" id="rep-group" class="input" placeholder="ВТиПО-31">
+                        </div>
+                        <div class="field">
+                            <label><span class="lang-ru">Дата:</span><span class="lang-kz hidden">Күні:</span></label>
+                            <input type="date" id="rep-date" class="input input-mono">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label><span class="lang-ru">Результат итогового теста (автозаполнение):</span><span class="lang-kz hidden">Қорытынды тест нәтижесі (автоматты):</span></label>
+                        <input type="text" id="rep-score" class="input input-mono" readonly="" value="Тест еще не пройден / Тест өтілмеген">
+                    </div>
+
+                    <!-- Поля Пары 5 -->
+                    <div class="grid-3">
+                        <div class="field">
+                            <label><span class="lang-ru">Режим BIOS (msinfo32):</span><span class="lang-kz hidden">BIOS режимі (msinfo32):</span></label>
+                            <select id="rep-bios" class="select">
+                                <option value="UEFI">UEFI</option>
+                                <option value="Legacy (Устаревший)">Legacy (Устаревший)</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label><span class="lang-ru">Состояние Secure Boot:</span><span class="lang-kz hidden">Secure Boot күйі:</span></label>
+                            <select id="rep-secboot" class="select">
+                                <option value="Вкл (Enabled)">Вкл (Enabled)</option>
+                                <option value="Выкл (Disabled)">Выкл (Disabled)</option>
+                                <option value="Не поддерживается">Не поддерживается</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label><span class="lang-ru">Стиль разделов диска:</span><span class="lang-kz hidden">Диск бөлім стилі:</span></label>
+                            <select id="rep-part" class="select">
+                                <option value="GPT">GPT (GUID Partition Table)</option>
+                                <option value="MBR">MBR (Master Boot Record)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label><span class="lang-ru">Пара 5 — Краткая расшифровка 3 типовых сигналов POST (AMI / Award):</span><span class="lang-kz hidden">5-жұп — 3 типтік POST сигналының қысқаша сипаттамасы (AMI / Award):</span></label>
+                        <textarea id="rep-post" class="textarea" rows="3" placeholder="1) AMI 3 коротких — ошибка ОЗУ; 2) Award 1 длинный + 2 коротких — ошибка видеокарты; 3) AMI 5 коротких — ошибка процессора..."></textarea>
+                    </div>
+
+                    <!-- Поля Пары 6 -->
+                    <div class="field">
+                        <label><span class="lang-ru">Пара 6 — Параметры из msconfig / bcdedit (тайм-аут, путь загрузчика):</span><span class="lang-kz hidden">6-жұп — msconfig / bcdedit параметрлері (тайм-аут, жүктеуші жолы):</span></label>
+                        <textarea id="rep-bcd" class="textarea" rows="2" placeholder="Тайм-аут: 30 сек, загрузчик: \Windows\system32\winload.efi, ОС по умолчанию: Windows 11..."></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label><span class="lang-ru">Пара 6 — Краткий аналитический вывод (Windows Boot Manager vs GRUB2):</span><span class="lang-kz hidden">6-жұп — Қысқаша аналитикалық қорытынды (Windows Boot Manager vs GRUB2):</span></label>
+                        <textarea id="rep-compare" class="textarea" rows="2" placeholder="WBM использует бинарный BCD и ориентирован на Windows, а GRUB2 хранит настройки в текстовом grub.cfg и лучше подходит для Dual-Boot..."></textarea>
+                    </div>
+
+                    <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; padding-top:4px;">
+                        <button class="btn btn-emerald" onclick="copyStudentReport()">📋 <span class="lang-ru">Скопировать отчет (текст)</span><span class="lang-kz hidden">Есепті көшіру (мәтін)</span></button>
+                        <button class="btn btn-primary" onclick="downloadReportHtml()">⬇️ <span class="lang-ru">Скачать отчет (.html)</span><span class="lang-kz hidden">Есепті жүктеу (.html)</span></button>
+                        <button class="btn btn-outline" onclick="window.print()">🖨️ <span class="lang-ru">Печать / Сохранить в PDF</span><span class="lang-kz hidden">Басып шығару / PDF сақтау</span></button>
+                    </div>
+                </div>
+
+                <!-- Памятка для iPhone / Safari -->
+                <div class="col-5 no-print" style="display:flex; flex-direction:column; gap:14px;">
+                    <div class="callout callout-amber" style="margin-top:0;">
+                        <span class="callout-title">🍎 <span class="lang-ru">Как сохранить отчет в PDF на iPhone (Safari):</span><span class="lang-kz hidden">iPhone-да (Safari) есепті PDF ретінде сақтау:</span></span>
+                        <ol class="nice-list" style="margin-top:8px;">
+                            <li><span class="lang-ru">Нажмите <strong>«Печать / Сохранить в PDF»</strong> слева (или кнопку <strong>«Поделиться»</strong> внизу Safari → <strong>«Напечатать»</strong>).</span><span class="lang-kz hidden">Сол жақтағы <strong>«Басып шығару / PDF сақтау»</strong> батырмасын (немесе Safari төменіндегі <strong>«Бөлісу» → «Басып шығару»</strong>) басыңыз.</span></li>
+                            <li><span class="lang-ru">В окне предпросмотра <strong>разведите двумя пальцами</strong> превью страницы — она превратится в PDF-документ.</span><span class="lang-kz hidden">Алдын ала қарау терезесінде бетті <strong>екі саусақпен үлкейтіңіз</strong> — ол дайын PDF құжатына айналады.</span></li>
+                            <li><span class="lang-ru">Нажмите «Поделиться» → <strong>«Сохранить в Файлы»</strong> или сразу отправьте преподавателю.</span><span class="lang-kz hidden">«Бөлісу» → <strong>«Файлдарға сақтау»</strong> батырмасын басыңыз немесе оқытушыға жіберіңіз.</span></li>
+                        </ol>
+                        <p class="muted" style="font-size:12px; margin-top:10px;">
+                            💡 <span class="lang-ru">Самый быстрый способ с телефона: нажмите <strong>«Скопировать отчет (текст)»</strong> или <strong>«Скачать отчет (.html)»</strong> и отправьте в чат.</span>
+                            <span class="lang-kz hidden">Телефоннан ең жылдам жол: <strong>«Есепті көшіру (мәтін)»</strong> немесе <strong>«Есепті жүктеу (.html)»</strong> басып чатқа жіберіңіз.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="no-print">
+        <span class="lang-ru">Системное программное обеспечение (3 курс) • Лабораторная работа №5–6 • Автономный HTML-портал • RU / KZ</span>
+        <span class="lang-kz hidden">Жүйелік программалық қамтамасыз ету (3-курс) • №5–6 Зертханалық жұмыс • Автономды HTML-портал • RU / KZ</span>
+    </footer>
+
+    <script>
+        /* =====================================================================
+           ГЛОБАЛЬНОЕ СОСТОЯНИЕ И ДАННЫЕ
+           ===================================================================== */
+        let currentLang = 'ru';
+        let activeBootStep = 0;
+        let activePostKey = 'ok';
+        let audioCtx = null;
+        let quizSubmitted = false;
+        let userAnswers = new Array(20).fill(null);
+
+        // 1. Данные 6 этапов старта ПК (для степпера в лекции)
+        const BOOT_STEPS = [
+            {
+                ruTitle: "Этап 1: Блок питания (PSU) и сигнал Power Good",
+                kzTitle: "1-кезең: Қоректендіру блогы (PSU) және Power Good сигналы",
+                ruDesc: "После нажатия кнопки Power блок питания подает стабилизированные напряжения (+3.3В, +5В, +12В) на материнскую плату. Когда напряжение выходит на норму, БП отправляет чипсету сигнал <strong>Power Good (PWR_OK)</strong> — это зеленый свет на снятие блокировки (Reset) с процессора.",
+                kzDesc: "Power батырмасы басылғаннан кейін қоректендіру блогы аналық платаға тұрақты кернеулерді (+3.3В, +5В, +12В) береді. Кернеу қалыпқа келгенде БП чипсетке <strong>Power Good (PWR_OK)</strong> сигналын жіберіп, процессорды іске қосады."
+            },
+            {
+                ruTitle: "Этап 2: Сброс CPU и чтение прошивки BIOS/UEFI из SPI Flash",
+                kzTitle: "2-кезең: CPU қайта жүктелуі және SPI Flash-тан BIOS/UEFI оқу",
+                ruDesc: "Процессор просыпается и обращается к жестко зашитому адресу памяти (Reset Vector), который ведет прямо в энергонезависимую микросхему <strong>SPI Flash</strong> на материнской плате. Оттуда считывается микропрограмма <strong>UEFI</strong> (или старый BIOS).",
+                kzDesc: "Процессор оянып, аналық платадағы <strong>SPI Flash</strong> микросхемасына бағытталған бекітілген жады мекенжайына (Reset Vector) жүгінеді. Сол жерден <strong>UEFI</strong> (немесе ескі BIOS) микробағдарламасы оқылады."
+            },
+            {
+                ruTitle: "Этап 3: Самотестирование аппаратуры POST (Power-On Self-Test)",
+                kzTitle: "3-кезең: Аппараттық өзін-өзі тексеру POST (Power-On Self-Test)",
+                ruDesc: "Прошивка инициализирует контроллер памяти, тестирует ОЗУ (RAM), запускает видеоадаптер (VGA), проверяет шины PCIe/USB и накопители. При успехе раздается 1 короткий сигнал спикера (или гаснут все 4 диода EZ Debug LED).",
+                kzDesc: "Прошивка жады контроллерін іске қосады, ЖЖҚ-ны (RAM), бейнеадаптерді (VGA), PCIe/USB шиналарын және дискілерді тексереді. Сәтті өтсе спикер 1 қысқа дыбыс береді (немесе барлық EZ Debug LED шамдары сөнеді)."
+            },
+            {
+                ruTitle: "Этап 4: Чтение таблицы разделов диска (MBR или GPT)",
+                kzTitle: "4-кезең: Диск бөлімдерінің кестесін оқу (MBR немесе GPT)",
+                ruDesc: "Прошивка опрашивает устройства в порядке Boot Order. В режиме <strong>Legacy</strong> читаются первые 512 байт диска (MBR). В режиме <strong>UEFI</strong> читается таблица GPT, находится системный раздел <strong>ESP (FAT32)</strong> и проверяется подпись загрузчика (если включен Secure Boot).",
+                kzDesc: "Прошивка Boot Order кезегімен құрылғыларды тексереді. <strong>Legacy</strong> режимінде дискінің алғашқы 512 байты (MBR), ал <strong>UEFI</strong> режимінде GPT кестесі оқылып, <strong>ESP (FAT32)</strong> бөлімі табылады және Secure Boot қолтаңбасы тексеріледі."
+            },
+            {
+                ruTitle: "Этап 5: Загрузчик ОС (Windows Boot Manager / GNU GRUB2)",
+                kzTitle: "5-кезең: ОЖ жүктеушісі (Windows Boot Manager / GNU GRUB2)",
+                ruDesc: "Запускается файл <code>bootmgfw.efi</code> (Windows) или <code>grubx64.efi</code> (Linux). Загрузчик считывает конфигурацию (база <strong>BCD</strong> или текстовый <strong>grub.cfg</strong>), при наличии нескольких систем показывает меню выбора и передает управление загрузчику ядра (<code>winload.efi</code>).",
+                kzDesc: "<code>bootmgfw.efi</code> (Windows) немесе <code>grubx64.efi</code> (Linux) файлы іске қосылады. Жүктеуші конфигурацияны (<strong>BCD</strong> немесе <strong>grub.cfg</strong>) оқып, қажет болса таңдау мәзірін көрсетеді де, басқаруды ядро жүктеушісіне (<code>winload.efi</code>) береді."
+            },
+            {
+                ruTitle: "Этап 6: Загрузка ядра ОС и системных драйверов",
+                kzTitle: "6-кезең: ОЖ ядросы мен жүйелік драйверлерді жүктеу",
+                ruDesc: "Ядро <code>ntoskrnl.exe</code> (Windows) или <code>vmlinuz</code> + <code>initramfs</code> (Linux) разворачивается в оперативной памяти, подгружает базовые драйверы (Ring 0), монтирует корневую файловую систему и запускает экран входа в систему.",
+                kzDesc: "<code>ntoskrnl.exe</code> (Windows) немесе <code>vmlinuz</code> + <code>initramfs</code> (Linux) ядросы жедел жадыға орналасып, негізгі драйверлерді (Ring 0) жүктейді, файлдық жүйені қосады және жүйеге кіру экранын ашады."
+            }
+        ];
+
+        // 2. Сценарии POST-симулятора (Web Audio API + EZ Debug LED)
+        const POST_SCENARIOS = {
+            ok: {
+                pattern: [150],
+                wave: '• (1 SHORT)',
+                led: 'ok',
+                ledColor: 'on-green',
+                callout: 'callout-emerald',
+                ru: '<strong>Диагноз: Система исправна (POST пройден успешно).</strong><br>Все базовые узлы (CPU, RAM, VGA) прошли проверку. Прошивка передает управление загрузчику операционной системы.',
+                kz: '<strong>Диагноз: Жүйе қалыпты (POST сәтті өтті).</strong><br>Барлық негізгі түйіндер (CPU, RAM, VGA) тексерістен өтті. Прошивка басқаруды операциялық жүйенің жүктеушісіне береді.'
+            },
+            ram: {
+                pattern: [150, 150, 150],
+                wave: '• • • (3 SHORT — AMI)',
+                led: 'dram',
+                ledColor: 'on-amber',
+                callout: 'callout-amber',
+                ru: '<strong>Диагноз (AMI BIOS): Ошибка первых 64 КБ оперативной памяти (DRAM).</strong><br><strong>Действия инженера:</strong> обесточьте ПК, извлеките модули ОЗУ, аккуратно протрите контакты, проверьте планки по одной в слоте A2/B2.',
+                kz: '<strong>Диагноз (AMI BIOS): Жедел жадының (DRAM) алғашқы 64 КБ қатесі.</strong><br><strong>Инженер әрекеті:</strong> ДК-ні токтан ажыратыңыз, ЖЖҚ модульдерін суырып контактілерін тазалаңыз, планкаларды A2/B2 слоттарында бір-бірлеп тексеріңіз.'
+            },
+            vga_award: {
+                pattern: [550, 150, 150],
+                wave: '━━ • • (1 LONG + 2 SHORT — AWARD)',
+                led: 'vga',
+                ledColor: 'on-red',
+                callout: 'callout-rose',
+                ru: '<strong>Диагноз (Award BIOS): Неисправность или отсутствие видеокарты (VGA).</strong><br><strong>Действия инженера:</strong> проверьте плотность посадки видеокарты в слоте PCIe x16, кабель доп. питания 6/8-pin и кабель монитора.',
+                kz: '<strong>Диагноз (Award BIOS): Бейнекарта (VGA) ақауы немесе табылмауы.</strong><br><strong>Инженер әрекеті:</strong> бейнекартаның PCIe x16 слотына дұрыс отырғанын, 6/8-pin қосымша қуат кабелін және монитор кабелін тексеріңіз.'
+            },
+            vga_ami: {
+                pattern: [550, 150, 150, 150],
+                wave: '━━ • • • (1 LONG + 3 SHORT — AMI)',
+                led: 'vga',
+                ledColor: 'on-red',
+                callout: 'callout-rose',
+                ru: '<strong>Диагноз (AMI BIOS): Ошибка видеопамяти или сбой инициализации видеоадаптера (VGA).</strong><br><strong>Действия инженера:</strong> переустановите видеокарту, сбросьте CMOS или проверьте вывод картинки через встроенную графику процессора.',
+                kz: '<strong>Диагноз (AMI BIOS): Бейнежады қатесі немесе бейнеадаптердің (VGA) іске қосылмауы.</strong><br><strong>Инженер әрекеті:</strong> бейнекартаны қайта орнатыңыз, CMOS-ты тазартыңыз немесе процессордың кіріктірілген графикасы арқылы тексеріңіз.'
+            },
+            cpu: {
+                pattern: [150, 150, 150, 150, 150],
+                wave: '• • • • • (5 SHORT — AMI)',
+                led: 'cpu',
+                ledColor: 'on-red',
+                callout: 'callout-rose',
+                ru: '<strong>Диагноз (AMI BIOS): Критическая ошибка центрального процессора (CPU).</strong><br><strong>Действия инженера:</strong> проверьте кабель питания CPU 4/8-pin, убедитесь в совместимости версии BIOS с процессором и осмотрите ножки сокета.',
+                kz: '<strong>Диагноз (AMI BIOS): Орталық процессордың (CPU) ауыр қатесі.</strong><br><strong>Инженер әрекеті:</strong> CPU 4/8-pin қуат кабелін, BIOS нұсқасының процессормен үйлесімділігін және сокет контактілерін тексеріңіз.'
+            },
+            cont: {
+                pattern: [1100],
+                wave: '━━━━━━━━━━ (CONTINUOUS)',
+                led: 'dram',
+                ledColor: 'on-red',
+                callout: 'callout-rose',
+                ru: '<strong>Диагноз (Award / AMI): Неисправность блока питания (просадка линий) или короткое замыкание / незафиксированный модуль ОЗУ.</strong><br><strong>Действия инженера:</strong> немедленно выключите питание, проверьте 24-pin разъем БП и посадку модулей памяти.',
+                kz: '<strong>Диагноз (Award / AMI): Қоректендіру блогының ақауы немесе ЖЖҚ модулінің дұрыс бекітілмеуі.</strong><br><strong>Инженер әрекеті:</strong> токты дереу өшіріңіз, БП 24-pin ажыратқышын және жады модульдерін тексеріңіз.'
+            }
+        };
+
+        // 3. 20 вопросов итогового теста (строго по 5 правильных ответов на индексы 0, 1, 2, 3; одинаковая длина)
+        const QUIZ_DATA = [
+            {
+                ru: "1. Какой сигнал блок питания отправляет материнской плате после стабилизации напряжений?",
+                kz: "1. Кернеу тұрақталған соң қоректендіру блогы аналық платаға қандай сигнал жібереді?",
+                optsRu: ["Сигнал Power Good (PWR_OK)", "Сигнал прерывания клавиатуры", "Сигнал загрузки ядра ОС", "Сигнал очистки таблицы GPT"],
+                optsKz: ["Power Good (PWR_OK) сигналын", "Пернетақта үзіліс сигналын", "ОЖ ядросын жүктеу сигналын", "GPT кестесін тазалау сигналын"],
+                ans: 0
+            },
+            {
+                ru: "2. В какой микросхеме на материнской плате хранится прошивка BIOS или UEFI?",
+                kz: "2. Аналық платадағы BIOS немесе UEFI прошивкасы қай микросхемада сақталады?",
+                optsRu: ["В кэш-памяти L3 процессора", "В энергонезависимой SPI Flash", "В оперативной памяти DDR4", "В первом секторе жесткого диска"],
+                optsKz: ["Процессордың L3 кэш жадында", "Тұрақты SPI Flash жадында", "DDR4 жедел жадында", "Қатты дискінің бірінші секторында"],
+                ans: 1
+            },
+            {
+                ru: "3. Что означает аббревиатура POST на начальном этапе включения компьютера?",
+                kz: "3. Компьютер қосылуының бастапқы кезеңіндегі POST аббревиатурасы нені білдіреді?",
+                optsRu: ["Панель настройки сетевых портов", "Протокол обмена системных таблиц", "Самотестирование при включении", "Программа очистки системных томов"],
+                optsKz: ["Желілік порттарды баптау панелі", "Жүйелік кестелер алмасу хаттамасы", "Қосылу кезіндегі өзін-өзі тексеру", "Жүйелік томдарды тазалау бағдарламасы"],
+                ans: 2
+            },
+            {
+                ru: "4. О чем свидетельствует 1 короткий звуковой сигнал спикера в AMI и Award BIOS?",
+                kz: "4. AMI және Award BIOS-та спикердің 1 қысқа дыбыстық сигналы нені білдіреді?",
+                optsRu: ["Обнаружена ошибка видеокарты", "Отсутствует модуль оперативной памяти", "Не подключен загрузочный накопитель", "Тестирование POST пройдено успешно"],
+                optsKz: ["Бейнекарта қатесі анықталды", "Жедел жады модулі табылмады", "Жүктеу дискісі қосылмаған", "POST тексеруі сәтті өтті"],
+                ans: 3
+            },
+            {
+                ru: "5. На какую неисправность указывают 3 коротких сигнала в прошивке AMI BIOS?",
+                kz: "5. AMI BIOS прошивкасындағы 3 қысқа сигнал қандай ақауды көрсетеді?",
+                optsRu: ["Ошибка базовой оперативной памяти", "Ошибка контроллера сетевой карты", "Ошибка отсутствия мыши в порту USB", "Ошибка перегрева жесткого диска"],
+                optsKz: ["Негізгі жедел жадының қатесі", "Желілік карта контроллерінің қатесі", "USB портында тінтуірдің жоқтығы", "Қатты дискінің қызып кету қатесі"],
+                ans: 0
+            },
+            {
+                ru: "6. Какая комбинация сигналов в Award BIOS сообщает о неисправности видеокарты?",
+                kz: "6. Award BIOS-та қай сигналдар тіркесі бейнекартаның ақауын хабарлайды?",
+                optsRu: ["Пять коротких сигналов подряд", "Один длинный и два коротких", "Два коротких сигнала подряд", "Один короткий и три длинных"],
+                optsKz: ["Қатарынан бес қысқа сигнал", "Бір ұзын және екі қысқа сигнал", "Қатарынан екі қысқа сигнал", "Бір қысқа және үш ұзын сигнал"],
+                ans: 1
+            },
+            {
+                ru: "7. Что означает горящий светодиод BOOT на панели EZ Debug LED материнской платы?",
+                kz: "7. Аналық платадағы EZ Debug LED панелінде BOOT шамының жанып тұруы нені білдіреді?",
+                optsRu: ["Вышел из строя центральный процессор", "Повреждена планка оперативной памяти", "Не найдено устройство загрузки с ОС", "Не подключено питание видеокарты"],
+                optsKz: ["Орталық процессор істен шықты", "Жедел жады планкасы зақымдалған", "ОЖ бар жүктеу құрылғысы табылмады", "Бейнекарта қуаты қосылмаған"],
+                ans: 2
+            },
+            {
+                ru: "8. Каков максимальный поддерживаемый объем диска для таблицы разделов MBR?",
+                kz: "8. MBR бөлімдер кестесі қолдайтын дискінің максималды көлемі қандай?",
+                optsRu: ["Ограничение составляет 512 ГБ", "Ограничение составляет 16 ТБ", "Ограничение составляет 128 ТБ", "Ограничение составляет 2 ТБ"],
+                optsKz: ["Шектеу 512 ГБ құрайды", "Шектеу 16 ТБ құрайды", "Шектеу 128 ТБ құрайды", "Шектеу 2 ТБ құрайды"],
+                ans: 3
+            },
+            {
+                ru: "9. Сколько основных разделов максимально допускает классическая таблица MBR?",
+                kz: "9. Классикалық MBR кестесі ең көбі қанша негізгі бөлімге рұқсат береді?",
+                optsRu: ["Не более 4 основных разделов", "Не более 16 основных разделов", "Не более 64 основных разделов", "Не более 128 основных разделов"],
+                optsKz: ["4 негізгі бөлімнен аспайды", "16 негізгі бөлімнен аспайды", "64 негізгі бөлімнен аспайды", "128 негізгі бөлімнен аспайды"],
+                ans: 0
+            },
+            {
+                ru: "10. Сколько основных разделов поддерживает стандарт GPT в операционной системе Windows?",
+                kz: "10. Windows операциялық жүйесінде GPT стандарты қанша негізгі бөлімді қолдайды?",
+                optsRu: ["Ровно 4 основных раздела", "До 128 основных разделов", "Не более 8 основных разделов", "Ровно 2 основных раздела"],
+                optsKz: ["Дәл 4 негізгі бөлім", "128 негізгі бөлімге дейін", "8 негізгі бөлімнен аспайды", "Дәл 2 негізгі бөлім"],
+                ans: 1
+            },
+            {
+                ru: "11. В какой файловой системе должен быть отформатирован системный раздел ESP для UEFI?",
+                kz: "11. UEFI үшін жүйелік ESP бөлімі қандай файлдық жүйеде форматталуы тиіс?",
+                optsRu: ["В файловой системе NTFS", "В файловой системе ext4", "В файловой системе FAT32", "В файловой системе exFAT"],
+                optsKz: ["NTFS файлдық жүйесінде", "ext4 файлдық жүйесінде", "FAT32 файлдық жүйесінде", "exFAT файлдық жүйесінде"],
+                ans: 2
+            },
+            {
+                ru: "12. Как таблица разделов GPT защищается от случайного повреждения данных в начале диска?",
+                kz: "12. GPT бөлімдер кестесі диск басындағы деректердің кездейсоқ зақымдалуынан қалай қорғалады?",
+                optsRu: ["Шифрует все файлы паролем BIOS", "Запрещает запись на системный диск", "Сжимает разделы в архив ZIP", "Хранит резервную копию и CRC32"],
+                optsKz: ["Барлық файлды BIOS құпиясөзімен шифрлайды", "Жүйелік дискіге жазуға тыйым салады", "Бөлімдерді ZIP архивіне сығады", "Резервтік көшірме мен CRC32 сақтайды"],
+                ans: 3
+            },
+            {
+                ru: "13. Какую главную функцию выполняет технология Secure Boot в современных прошивках UEFI?",
+                kz: "13. Заманауи UEFI прошивкаларында Secure Boot технологиясы қандай басты қызмет атқарады?",
+                optsRu: ["Проверяет цифровую подпись загрузчика", "Ускоряет вращение вентиляторов ПК", "Увеличивает частоту оперативной памяти", "Очищает временные файлы браузера"],
+                optsKz: ["Жүктеушінің цифрлық қолтаңбасын тексереді", "ДК желдеткіштерінің айналуын үдетеді", "Жедел жадының жиілігін арттырады", "Браузердің уақытша файлдарын тазалайды"],
+                ans: 0
+            },
+            {
+                ru: "14. Какая встроенная утилита Windows позволяет быстро увидеть «Режим BIOS» и статус Secure Boot?",
+                kz: "14. Windows-тың қай кіріктірілген утилитасы «BIOS режимі» мен Secure Boot күйін жылдам көрсетеді?",
+                optsRu: ["Консоль управления calc.exe", "Сведения о системе msinfo32", "Блокнот системы notepad.exe", "Графический редактор mspaint"],
+                optsKz: ["calc.exe басқару консолі", "msinfo32 жүйе мәліметтері", "notepad.exe жүйе блокноты", "mspaint графикалық редакторы"],
+                ans: 1
+            },
+            {
+                ru: "15. Какой файл является основным менеджером загрузки Windows на системах с UEFI?",
+                kz: "15. UEFI бар жүйелерде Windows жүктеу менеджерінің негізгі файлы қайсы?",
+                optsRu: ["Системный файл explorer.exe", "Системный файл cmd.exe", "Файл загрузчика bootmgfw.efi", "Файл драйвера nvlddmkm.sys"],
+                optsKz: ["explorer.exe жүйелік файлы", "cmd.exe жүйелік файлы", "bootmgfw.efi жүктеуші файлы", "nvlddmkm.sys драйвер файлы"],
+                ans: 2
+            },
+            {
+                ru: "16. В каком файле или хранилище Windows Boot Manager хранит настройки и список систем?",
+                kz: "16. Windows Boot Manager баптаулар мен жүйелер тізімін қай файлда немесе қоймада сақтайды?",
+                optsRu: ["В текстовом файле boot.txt", "В файле настроек grub.cfg", "В папке автозагрузки Startup", "В бинарной базе реестра BCD"],
+                optsKz: ["boot.txt мәтіндік файлында", "grub.cfg баптау файлында", "Startup автожүктеу бумасында", "Бинарлық BCD реестр базасында"],
+                ans: 3
+            },
+            {
+                ru: "17. Какая консольная утилита Windows предназначена для просмотра и редактирования базы BCD?",
+                kz: "17. BCD базасын қарау және өңдеу үшін Windows-тың қай консольдік утилитасы қолданылады?",
+                optsRu: ["Утилита командной строки bcdedit", "Утилита проверки сети ipconfig", "Утилита мониторинга tasklist", "Утилита архивации compact"],
+                optsKz: ["bcdedit командалық жол утилитасы", "ipconfig желіні тексеру утилитасы", "tasklist мониторинг утилитасы", "compact архивтеу утилитасы"],
+                ans: 0
+            },
+            {
+                ru: "18. Где хранится основной сгенерированный конфигурационный файл загрузчика Linux GRUB2?",
+                kz: "18. Linux GRUB2 жүктеушісінің негізгі конфигурациялық файлы қайда сақталады?",
+                optsRu: ["В каталоге C:\\Windows\\System32", "В текстовом файле /boot/grub/grub.cfg", "В скрытом реестре HKEY_LOCAL_MACHINE", "В файле подкачки /swapfile"],
+                optsKz: ["C:\\Windows\\System32 каталогында", "/boot/grub/grub.cfg мәтіндік файлында", "HKEY_LOCAL_MACHINE жасырын реестрінде", "/swapfile ауыстыру файлында"],
+                ans: 1
+            },
+            {
+                ru: "19. Как называется механизм, с помощью которого GRUB2 передает управление загрузчику Windows?",
+                kz: "19. GRUB2 арқылы басқаруды Windows жүктеушісіне беру механизмі қалай аталады?",
+                optsRu: ["Механизм разгона Overclocking", "Механизм дефрагментации диска", "Цепочечная загрузка Chainloading", "Сжатие оперативной памяти"],
+                optsKz: ["Overclocking үдету механизмі", "Дискіні дефрагментациялау механизмі", "Chainloading тізбекті жүктеуі", "Жедел жадыны сығу механизмі"],
+                ans: 2
+            },
+            {
+                ru: "20. Какая команда среды восстановления Windows (WinRE) создает заново файлы загрузки UEFI в разделе ESP?",
+                kz: "20. Windows қалпына келтіру ортасында (WinRE) ESP бөлімінде UEFI жүктеу файлдарын қай команда қайта жасайды?",
+                optsRu: ["Команда очистки экрана cls", "Команда проверки пинга ping", "Команда просмотра папки dir", "Команда восстановления bcdboot"],
+                optsKz: ["cls экранды тазалау командасы", "ping желіні тексеру командасы", "dir буманы қарау командасы", "bcdboot қалпына келтіру командасы"],
+                ans: 3
+            }
+        ];
+
+        /* =====================================================================
+           НАВИГАЦИЯ, ЯЗЫК, ТЕМА, TOAST, КОПИРОВАНИЕ
+           ===================================================================== */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const active = document.getElementById('btn-' + tabId);
+            if (active) active.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('spo_lab56_lang', lang);
+
+            document.querySelectorAll('.lang-ru').forEach(el => el.classList.toggle('hidden', lang === 'kz'));
+            document.querySelectorAll('.lang-kz').forEach(el => el.classList.toggle('hidden', lang === 'ru'));
+
+            document.getElementById('lang-btn-ru').classList.toggle('active', lang === 'ru');
+            document.getElementById('lang-btn-kz').classList.toggle('active', lang === 'kz');
+
+            selectBootStep(activeBootStep);
+            renderPostDiagnosis(activePostKey);
+            updateBcdSim();
+            renderQuiz();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('theme-btn');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                btn.textContent = '🌙';
+                localStorage.setItem('spo_lab56_theme', 'light');
+            } else {
+                html.classList.add('dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('spo_lab56_theme', 'dark');
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2600);
+        }
+
+        function copyTextToClipboard(text, msg) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            const range = document.createRange();
+            range.selectNodeContents(ta);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            ta.setSelectionRange(0, 999999);
+            try {
+                document.execCommand('copy');
+                showToast(msg || (currentLang === 'kz' ? 'Буферге көшірілді!' : 'Скопировано в буфер!'));
+            } catch (e) {
+                showToast('Ошибка копирования');
+            }
+            document.body.removeChild(ta);
+        }
+
+        function copyById(id) {
+            const el = document.getElementById(id);
+            if (el) copyTextToClipboard(el.textContent.trim());
+        }
+
+        /* =====================================================================
+           ВКЛАДКА 1: ИНТЕРАКТИВНЫЙ СТЕППЕР СТАРТА ПК
+           ===================================================================== */
+        function selectBootStep(idx) {
+            activeBootStep = idx;
+            for (let i = 0; i < 6; i++) {
+                const btn = document.getElementById('bstep-' + i);
+                if (btn) btn.classList.toggle('active', i === idx);
+            }
+            const item = BOOT_STEPS[idx];
+            const box = document.getElementById('boot-step-detail');
+            const title = currentLang === 'kz' ? item.kzTitle : item.ruTitle;
+            const desc = currentLang === 'kz' ? item.kzDesc : item.ruDesc;
+            box.innerHTML = `<div style="font-weight:800; font-size:0.98rem; margin-bottom:6px;">${title}</div><div style="font-size:0.9rem; color:var(--text-muted);">${desc}</div>`;
+        }
+
+        /* =====================================================================
+           ВКЛАДКА 2: СИМУЛЯТОР POST (WEB AUDIO API + EZ DEBUG LED)
+           ===================================================================== */
+        function playBeepSequence(durations) {
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContextClass) return;
+                if (!audioCtx) audioCtx = new AudioContextClass();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                let t = audioCtx.currentTime + 0.04;
+                durations.forEach(ms => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(800, t);
+                    gain.gain.setValueAtTime(0.08, t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + ms / 1000);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(t);
+                    osc.stop(t + ms / 1000);
+                    t += (ms / 1000) + 0.16;
+                });
+            } catch (e) {
+                // Игнорируем ограничения автовоспроизведения при ошибке
+            }
+        }
+
+        function playPostScenario(key) {
+            activePostKey = key;
+            const sc = POST_SCENARIOS[key];
+            if (!sc) return;
+            playBeepSequence(sc.pattern);
+            renderPostDiagnosis(key);
+        }
+
+        function renderPostDiagnosis(key) {
+            const sc = POST_SCENARIOS[key];
+            if (!sc) return;
+
+            // Обновляем активную кнопку
+            document.querySelectorAll('.post-scenario-btn').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById('pbtn-' + key.replace('_', '-'));
+            if (activeBtn) activeBtn.classList.add('active');
+
+            // Сбрасываем и зажигаем нужный EZ Debug LED
+            ['cpu', 'dram', 'vga', 'boot', 'ok'].forEach(id => {
+                const el = document.getElementById('led-' + id);
+                if (el) el.className = 'led-bulb';
+            });
+            const targetLed = document.getElementById('led-' + sc.led);
+            if (targetLed) targetLed.classList.add(sc.ledColor);
+
+            document.getElementById('post-wave-label').textContent = 'SIGNAL: ' + sc.wave;
+
+            const diagBox = document.getElementById('post-diag-box');
+            diagBox.className = 'callout ' + sc.callout;
+            diagBox.style.marginTop = '0';
+            diagBox.innerHTML = currentLang === 'kz' ? sc.kz : sc.ru;
+        }
+
+        /* =====================================================================
+           ВКЛАДКА 3: СИМУЛЯТОР BCDEDIT И ЭКРАНА ЗАГРУЗКИ (WBM / GRUB2)
+           ===================================================================== */
+        function updateBcdSim() {
+            const timeout = document.getElementById('bcd-timeout').value;
+            const os = document.getElementById('bcd-os').value;
+            const mode = document.getElementById('bcd-mode').value;
+
+            const defaultId = os === 'win' ? '{current}' : '{ubuntu-grub-efi}';
+            const safeLine = mode === 'minimal'
+                ? 'safeboot                Minimal\n'
+                : (mode === 'network' ? 'safeboot                Network\n' : '');
+
+            const consoleText =
+`Windows Boot Manager
+--------------------
+identifier              {bootmgr}
+device                  partition=\\Device\\HarddiskVolume1 (ESP FAT32)
+path                    \\EFI\\Microsoft\\Boot\\bootmgfw.efi
+description             Windows Boot Manager
+default                 ${defaultId}
+displayorder            {current}
+                        {ubuntu-grub-efi}
+timeout                 ${timeout}
+
+Windows Boot Loader
+-------------------
+identifier              {current}
+device                  partition=C:
+path                    \\Windows\\system32\\winload.efi
+description             Windows 11 Pro
+osdevice                partition=C:
+systemroot              \\Windows
+${safeLine}nx                      OptIn
+
+Firmware Application (Linux)
+----------------------------
+identifier              {ubuntu-grub-efi}
+path                    \\EFI\\ubuntu\\grubx64.efi
+description             Ubuntu 24.04 LTS (GNU GRUB 2.06)`;
+
+            document.getElementById('bcd-console').textContent = consoleText;
+
+            const screen = document.getElementById('boot-visual-screen');
+            const modeBadge = mode === 'normal'
+                ? (currentLang === 'kz' ? 'Қалыпты режим' : 'Обычный режим')
+                : (mode === 'minimal' ? 'SAFE MODE (Minimal)' : 'SAFE MODE (Network)');
+
+            if (os === 'win') {
+                screen.className = 'boot-screen wbm-theme';
+                screen.innerHTML = `
+                    <div>
+                        <div style="font-size:17px; font-weight:700; margin-bottom:14px;">
+                            ${currentLang === 'kz' ? 'Операциялық жүйені таңдаңыз' : 'Выберите операционную систему'}
+                        </div>
+                        <div class="boot-item selected">🪟 Windows 11 Pro <span style="float:right; font-size:11px; opacity:0.9;">[${modeBadge}]</span></div>
+                        <div class="boot-item">🐧 Ubuntu 24.04 LTS (via UEFI / GRUB2)</div>
+                    </div>
+                    <div style="font-size:11px; opacity:0.85; border-top:1px solid rgba(255,255,255,0.2); padding-top:10px;">
+                        ${currentLang === 'kz' ? 'Автоматты жүктелуге қалды:' : 'Автоматический запуск по умолчанию через:'} <strong>${timeout} sec</strong>
+                    </div>
+                `;
+            } else {
+                screen.className = 'boot-screen grub-theme';
+                screen.innerHTML = `
+                    <div>
+                        <div style="text-align:center; font-size:12px; margin-bottom:12px; color:#9ca3af;">GNU GRUB version 2.06</div>
+                        <div style="border:1px solid #9ca3af; padding:10px;">
+                            <div class="boot-item selected">*Ubuntu 24.04 LTS (Linux 6.8.0-generic)</div>
+                            <div class="boot-item"> Advanced options for Ubuntu (${modeBadge})</div>
+                            <div class="boot-item"> Windows Boot Manager (on /dev/nvme0n1p1) [chainload]</div>
+                            <div class="boot-item"> UEFI Firmware Settings</div>
+                        </div>
+                    </div>
+                    <div style="font-size:11px; color:#9ca3af; margin-top:10px;">
+                        The highlighted entry will be executed automatically in <strong>${timeout}s</strong>.
+                    </div>
+                `;
+            }
+        }
+
+        /* =====================================================================
+           ВКЛАДКА 4: ИТОГОВЫЙ ТЕСТ (20 ВОПРОСОВ)
+           ===================================================================== */
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = QUIZ_DATA.map((q, qIdx) => {
+                const qText = currentLang === 'kz' ? q.kz : q.ru;
+                const opts = currentLang === 'kz' ? q.optsKz : q.optsRu;
+                let cardCls = 'quiz-card';
+                if (quizSubmitted) {
+                    cardCls += userAnswers[qIdx] === q.ans ? ' q-correct' : ' q-wrong';
+                }
+
+                const optsHtml = opts.map((opt, oIdx) => {
+                    const checked = userAnswers[qIdx] === oIdx ? 'checked' : '';
+                    let optCls = 'quiz-opt';
+                    if (quizSubmitted) {
+                        if (oIdx === q.ans) optCls += ' opt-right';
+                        else if (userAnswers[qIdx] === oIdx && oIdx !== q.ans) optCls += ' opt-wrong';
+                    }
+                    return `
+                        <label class="${optCls}">
+                            <input type="radio" name="q_${qIdx}" value="${oIdx}" ${checked} ${quizSubmitted ? 'disabled' : ''} onchange="userAnswers[${qIdx}] = ${oIdx}">
+                            <span>${opt}</span>
+                        </label>
+                    `;
+                }).join('');
+
+                return `<div class="${cardCls}"><div class="quiz-q">${qText}</div><div class="quiz-opts">${optsHtml}</div></div>`;
+            }).join('');
+        }
+
+        function submitQuiz() {
+            let correct = 0;
+            QUIZ_DATA.forEach((q, i) => { if (userAnswers[i] === q.ans) correct++; });
+            quizSubmitted = true;
+            const pct = Math.round((correct / QUIZ_DATA.length) * 100);
+            let grade = 'F';
+            if (pct >= 90) grade = 'A (Отлично)';
+            else if (pct >= 75) grade = 'B (Хорошо)';
+            else if (pct >= 50) grade = 'C (Удовл.)';
+
+            const scoreStr = `${correct} / ${QUIZ_DATA.length} (${pct}%) — ${grade}`;
+
+            const badge = document.getElementById('test-score-badge');
+            badge.textContent = scoreStr;
+            badge.className = pct >= 70 ? 'badge badge-emerald' : 'badge badge-amber';
+            badge.style.fontSize = '14px';
+            badge.style.padding = '8px 14px';
+
+            document.getElementById('rep-score').value = scoreStr;
+            renderQuiz();
+            showToast((currentLang === 'kz' ? 'Тест нәтижесі: ' : 'Результат теста: ') + `${correct} / 20 (${pct}%)`);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            quizSubmitted = false;
+            userAnswers = new Array(20).fill(null);
+            const badge = document.getElementById('test-score-badge');
+            badge.className = 'badge badge-cyan';
+            badge.innerHTML = '<span class="lang-ru">Не завершен</span><span class="lang-kz hidden">Аяқталмаған</span>';
+            document.getElementById('rep-score').value = 'Тест еще не пройден / Тест өтілмеген';
+            setLanguage(currentLang);
+        }
+
+        /* =====================================================================
+           ВКЛАДКА 5: ЭКСПОРТ ОТЧЕТА И СКАЧИВАНИЕ HTML
+           ===================================================================== */
+        function copyStudentReport() {
+            const name = document.getElementById('rep-name').value || 'Не указано';
+            const group = document.getElementById('rep-group').value || 'Не указана';
+            const date = document.getElementById('rep-date').value || '—';
+            const score = document.getElementById('rep-score').value;
+            const bios = document.getElementById('rep-bios').value;
+            const sec = document.getElementById('rep-secboot').value;
+            const part = document.getElementById('rep-part').value;
+            const post = document.getElementById('rep-post').value || '—';
+            const bcd = document.getElementById('rep-bcd').value || '—';
+            const cmp = document.getElementById('rep-compare').value || '—';
+
+            const txt =
+`ИНДИВИДУАЛЬНЫЙ ОТЧЕТ ПО ЛАБОРАТОРНОЙ РАБОТЕ №5-6
+Дисциплина: Системное программное обеспечение (3 курс)
+=================================================================
+Студент: ${name}
+Группа:  ${group}
+Дата:    ${date}
+Итоговый тест: ${score}
+-----------------------------------------------------------------
+ПАРА 5 (BIOS/UEFI, POST, MBR/GPT):
+• Режим прошивки ПК: ${bios}
+• Состояние Secure Boot: ${sec}
+• Стиль разделов диска: ${part}
+• Расшифровка 3 сигналов POST (AMI/Award):
+${post}
+-----------------------------------------------------------------
+ПАРА 6 (Загрузчики WBM, GRUB2, bcdedit):
+• Параметры msconfig / bcdedit:
+${bcd}
+• Сравнение Windows Boot Manager и GRUB2:
+${cmp}
+=================================================================`;
+            copyTextToClipboard(txt, currentLang === 'kz' ? 'Есеп көшірілді!' : 'Отчет скопирован!');
+        }
+
+        function downloadReportHtml() {
+            const name = document.getElementById('rep-name').value || 'Student';
+            const group = document.getElementById('rep-group').value || 'Group';
+            const date = document.getElementById('rep-date').value || '—';
+            const score = document.getElementById('rep-score').value;
+            const bios = document.getElementById('rep-bios').value;
+            const sec = document.getElementById('rep-secboot').value;
+            const part = document.getElementById('rep-part').value;
+            const post = (document.getElementById('rep-post').value || '—').replace(/\n/g, '<br>');
+            const bcd = (document.getElementById('rep-bcd').value || '—').replace(/\n/g, '<br>');
+            const cmp = (document.getElementById('rep-compare').value || '—').replace(/\n/g, '<br>');
+
+            const html = `<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Отчет СПО №5-6 — ${name}</title><style>body{font-family:Arial,sans-serif;max-width:780px;margin:28px auto;padding:18px;color:#0f172a;line-height:1.6}h1{font-size:20px;border-bottom:2px solid #0284c7;padding-bottom:8px}.box{background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:14px;margin:14px 0}</style></head><body><h1>Отчет по Лабораторной работе №5–6 (СПО: BIOS/UEFI, POST и Загрузчики)</h1><div class="box"><strong>Студент:</strong> ${name}<br><strong>Группа:</strong> ${group}<br><strong>Дата:</strong> ${date}<br><strong>Итоговый тест:</strong> ${score}</div><div class="box"><strong>Пара 5 (BIOS/UEFI, POST, MBR/GPT):</strong><br>Режим прошивки: ${bios} | Secure Boot: ${sec} | Разделы: ${part}<br><br><strong>Сигналы POST:</strong><br>${post}</div><div class="box"><strong>Пара 6 (msconfig / bcdedit):</strong><br>${bcd}<br><br><strong>Сравнение WBM и GRUB2:</strong><br>${cmp}</div></body></html>`;
+
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Report_SPO_Lab5_6_${name.replace(/\s+/g, '_')}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(currentLang === 'kz' ? 'Есеп файлы жүктелді!' : 'Файл отчета (.html) скачан!');
+        }
+
+        function downloadThisHtml() {
+            const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'spo_lab_5_6.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(currentLang === 'kz' ? 'spo_lab_5_6.html жүктелді!' : 'Файл spo_lab_5_6.html скачан!');
+        }
+
+        /* =====================================================================
+           ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ
+           ===================================================================== */
+        window.onload = function () {
+            if (localStorage.getItem('spo_lab56_theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-btn').textContent = '🌙';
+            }
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('rep-date').value = today;
+
+            const savedLang = localStorage.getItem('spo_lab56_lang') || 'ru';
+            setLanguage(savedLang);
+        };
+    </script>
+
+</body></html>
