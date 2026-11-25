@@ -1,823 +1,110 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
-        window.__firebase_config = firebaseConfig;
-        window.__initial_auth_token = initialAuthToken;
-        window.__app_id = appId;
-            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwNTkxMzMwNzQyOTk5OTYxNTQwNyIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjX2ZlZTFiNWVmNzI1OWZmNWJfc3BvX2xhYl83XzguaHRtbC0zOTYifSwiZXhwIjoxNzk1MzY4MjIzLCJpYXQiOjE3OTUzNjQ2MjMsImFsZyI6IlJTMjU2In0.bEagABqkoxYBGqQ6XglZwH2c5dGOM7C_KGydemXlc0hTjnHsPPvHANJxSgDvkkVoWGfClI7E47ELuaX7vZVvwuR5t4oPF4EGHVrdS_gplWStDBx2HbVibs274KjgY5OAvOso4hu7K4DMuFrzs43hejNGfl__5-umNI1XyYGrZd3YL-sQsv4SE_8aEmfMRldrlPojCEF-lG7O41i_0KB0no5eOxdKm7UqxRU91LSEtQwcBMx-niOj0T33hbgdLmdKdJw-oTfPfi-XcuOpfxMFeQ4NgHLg3R_N0Fe3h3KH-Wp3BwC-CYflw60hI1zTBrTa9DS3hAxqBR8Bqc-eIUFZ9Q","c_fee1b5ef7259ff5b_spo_lab_7_8.html-396")</script><script data-bard-client-injected="true">
-  document.addEventListener('input', (event) => {
-    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
-      const clonedDoc = document.cloneNode(true);
-      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
-      injectedScripts.forEach(el => el.remove());
-      window.parent.postMessage({
-        type: 'inlineEdit',
-        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
-      }, '*');
-    }
-  });
-</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const SCROLL_KEYS = new Set([
-    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
-    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
-  ]);
-  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
-
-  function isTextEntryTarget(target) {
-    if (!target) return false;
-    const tagName = target.tagName;
-    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
-        tagName === 'SELECT' || target.isContentEditable === true;
-  }
-
-  // An element absorbs the key only if it both overflows on the axis being
-  // scrolled and is configured to scroll on that axis. The cheap dimension
-  // test runs first because getComputedStyle forces a style recalc, and this
-  // runs on every keypress. Each axis is read from its own longhand: the
-  // 'overflow' shorthand serializes as two values when the axes differ, which
-  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
-  function canScroll(node, horizontal) {
-    const overflows = horizontal ? node.scrollWidth > node.clientWidth
-                                 : node.scrollHeight > node.clientHeight;
-    if (!overflows) return false;
-    const style = window.getComputedStyle(node);
-    const overflow = horizontal ? style.overflowX : style.overflowY;
-    return overflow === 'auto' || overflow === 'scroll';
-  }
-
-  // Walks up from the event target so nested scrollers keep their behavior.
-  // <body> is included because pages that pin the root height make it the
-  // scroll container.
-  function hasScrollableAncestor(target, horizontal) {
-    let node = target;
-    while (node && node !== document.documentElement) {
-      if (canScroll(node, horizontal)) return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
-
-  function rootCanScroll(horizontal) {
-    const scroller = document.scrollingElement || document.documentElement;
-    if (!scroller) return false;
-    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
-    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
-                      : scroller.scrollHeight > window.innerHeight + 1;
-  }
-
-  window.addEventListener('keydown', function(event) {
-    if (!SCROLL_KEYS.has(event.key)) return;
-    if (event.defaultPrevented) return;
-    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
-    // reserved for shortcuts, so none of them are scroll intent.
-    if (event.altKey || event.metaKey || event.ctrlKey) return;
-
-    const target = event.target;
-    if (isTextEntryTarget(target)) return;
-
-    // Anything that can still absorb the scroll gets to keep it.
-    const horizontal = HORIZONTAL_KEYS.has(event.key);
-    if (rootCanScroll(horizontal)) return;
-    if (hasScrollableAncestor(target, horizontal)) return;
-
-    event.preventDefault();
-  }, {capture: true, passive: false});
-})();</script><script data-bard-client-injected="true">(function() {
-  // Ensure this script is executed only once
-  if (window.firebaseAuthBridgeScriptLoaded) {
-    return;
-  }
-  window.firebaseAuthBridgeScriptLoaded = true;
-
-  let nextTokenPromiseId = 0;
-
-  // Stores { resolve, reject } for ongoing token requests
-  const pendingTokenPromises = {};
-
-  // Listen for messages from the Host Application
-  window.addEventListener('message', function(event) {
-
-    const messageData = event.data;
-
-  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
-      const { success, token, error, promiseId } = messageData ?? {};
-      if (pendingTokenPromises[promiseId]) {
-        if (success) {
-          pendingTokenPromises[promiseId].resolve(token);
-        } else {
-          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
-        }
-        delete pendingTokenPromises[promiseId];
-      }
-    }
-  });
-
-  // Expose a function for the Generated App to request a new Firebase token
-  window.requestNewFirebaseToken = function() {
-    const currentPromiseId = nextTokenPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingTokenPromises[currentPromiseId] = { resolve, reject };
-    });
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({
-        type: 'REQUEST_NEW_FIREBASE_TOKEN',
-        promiseId: currentPromiseId
-      }, '*');
-    } else {
-      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
-      delete pendingTokenPromises[currentPromiseId];
-    }
-    return promise;
-  };
-})();</script><script data-bard-client-injected="true">
-let realOriginalGetUserMedia = null;
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-}
-
-(function() {
-  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
-    try {
-      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
-        get: function() {
-          return undefined; // Or throw an error
-        },
-        configurable: false
-      });
-    } catch (error) {
-      console.error("Error defining prototype getter:", error);
-    }
-  }
-})();
-
-(function() {
-  const pendingMediaResolvers = {};
-  let nextMediaPromiseId = 0;
-
-  function requestMediaPermissions(constraints) {
-    const mediaPromiseId = nextMediaPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingMediaResolvers[mediaPromiseId] = (granted) => {
-        delete pendingMediaResolvers[mediaPromiseId];
-        resolve(granted);
-      };
-    });
-
-    window.parent.postMessage({
-      type: 'requestMediaPermission',
-      constraints: constraints,
-      promiseId: mediaPromiseId,
-    }, '*');
-
-    return promise;
-  }
-
-  let originalGetUserMedia = realOriginalGetUserMedia;
-
-  function interceptGetUserMedia() {
-    if (navigator.mediaDevices) {
-      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
-        value: function(constraints) {
-          return requestMediaPermissions(constraints).then((granted) => {
-            if (granted) {
-              if (originalGetUserMedia) {
-                return originalGetUserMedia(constraints);
-              } else {
-                throw new Error("Original getUserMedia not available.");
-              }
-            } else {
-              throw new DOMException('Permission denied', 'NotAllowedError');
-            }
-          });
-        },
-        writable: false,
-        configurable: false
-      });
-    }
-  }
-
-  interceptGetUserMedia();
-
-  const observer = new MutationObserver(function(mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'childList' && mutation.addedNodes) {
-        mutation.addedNodes.forEach(node => {
-          if (node === navigator.mediaDevices) {
-            interceptGetUserMedia();
-          }
-        });
-      }
-    }
-  });
-
-  function interceptSpeechRecognition() {
-    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
-      return;
-    }
-
-    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const SpeechRecognitionWrapper = function(...args) {
-      const recognizer = new OriginalSpeechRecognition(...args);
-      const originalStart = recognizer.start.bind(recognizer);
-
-      recognizer.start = function() {
-        requestMediaPermissions({ audio: true }).then(granted => {
-          if (granted) {
-            originalStart();
-          } else {
-            const errorEvent = new SpeechRecognitionErrorEvent('error');
-            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
-            recognizer.dispatchEvent(errorEvent);
-          }
-        });
-      };
-
-      return recognizer;
-    };
-
-    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
-    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
-
-    if (window.SpeechRecognition) {
-      window.SpeechRecognition = SpeechRecognitionWrapper;
-    }
-    if (window.webkitSpeechRecognition) {
-      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
-    }
-  }
-
-  interceptSpeechRecognition();
-
-  window.addEventListener('message', function(event) {
-    if (event.data) {
-      if (event.data.type === 'resolveMediaPermission') {
-        const { promiseId, granted } = event.data;
-        if (pendingMediaResolvers[promiseId]) {
-          pendingMediaResolvers[promiseId](granted);
-        }
-      }
-    }
-  });
-
-})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
-function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
-
- Copyright The Closure Library Authors.
- SPDX-License-Identifier: Apache-2.0
-*/
-function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
-let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
-null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.extensions="";var l=0,t=null,r=null,q=[],F=new TextEncoder,
-G=new TextDecoder;c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*
-16|0;return(f==="x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;
-(g=t)==null||g.postMessage(a)}};Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
-(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
-url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
-</script><script data-bard-client-injected="true">((function(modelInformation) {
-  const originalFetch = window.fetch;
-  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
-  let googleLlmBaseApiUrls = [
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
-  ];
-  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-    );
-  });
-  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-
-  const pendingFetchResolvers = {};
-  let nextPromiseId = 0;
-
-  function handleStringInput(input, optionsArgument) {
-    const actualUrl = input;
-    const fetchCallArgs = [actualUrl, optionsArgument];
-    const effectiveOptions = optionsArgument || {};
-    const bodyForApiKeyCheck = effectiveOptions.body;
-    const bodyForPostMessage = effectiveOptions.body;
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  function handleRequestInput(input, optionsArgument) {
-    const actualUrl = input.url;
-    const fetchCallArgs = [input, optionsArgument];
-    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (optionsArgument) {
-      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
-      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
-      if ('body' in optionsArgument) {
-        bodyForApiKeyCheck = optionsArgument.body;
-        bodyForPostMessage = optionsArgument.body;
-      } else {
-        bodyForApiKeyCheck = undefined;
-        bodyForPostMessage = input.body;
-      }
-    } else {
-      bodyForApiKeyCheck = undefined;
-      bodyForPostMessage = input.body;
-    }
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  window.fetch = function(input, optionsArgument) {
-    let actualUrl;
-    let fetchCallArgs;
-    let effectiveOptions = {};
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (typeof input === 'string') {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
-    } else if (input instanceof Request) {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
-    } else {
-      return originalFetch.apply(window, [input, optionsArgument]);
-    }
-
-    effectiveOptions.method = effectiveOptions.method || 'GET';
-    if (!effectiveOptions.headers) {
-      effectiveOptions.headers = new Headers();
-    }
-
-
-    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
-      let apiKeyIsNull = true;
-
-      const regex = new RegExp("models/([^:]+)");
-      const modelNameMatch = actualUrl.match(regex);
-      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
-
-
-      try {
-        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
-        const apiKeyParam = urlObject.searchParams.get('key');
-        if (apiKeyParam) {
-          apiKeyIsNull = false;
-        }
-      } catch (e) {
-        // Continue checks even if URL parsing fails
-      }
-
-      if (apiKeyIsNull && effectiveOptions.headers) {
-        const h = new Headers(effectiveOptions.headers);
-        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
-        if (apiKeyHeaderValue) {
-          apiKeyIsNull = false;
-          return originalFetch.apply(window, fetchCallArgs);
-        }
-      }
-
-      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
-        try {
-          const bodyData = JSON.parse(bodyForApiKeyCheck);
-          if (bodyData && bodyData.apiKey) {
-            apiKeyIsNull = false;
-            return originalFetch.apply(window, fetchCallArgs);
-          }
-        } catch (e) {
-          // Ignore JSON parsing errors
-        }
-      }
-
-      if(apiKeyIsNull) {
-        const promiseId = nextPromiseId++;
-        const promise = new Promise((resolve) => {
-          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
-            delete pendingFetchResolvers[promiseId];
-            resolve(resolvedResponse);
-          };
-        });
-
-        let serializedBodyForPostMessage;
-        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
-            serializedBodyForPostMessage = bodyForPostMessage;
-        } else if (bodyForPostMessage instanceof ReadableStream) {
-            serializedBodyForPostMessage = null;
-        } else {
-            try {
-                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
-            } catch (e) {
-                serializedBodyForPostMessage = null;
-            }
-        }
-
-        const messageOptions = {
-            method: effectiveOptions.method,
-            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
-            body: serializedBodyForPostMessage
-        };
-
-        window.parent.postMessage({
-          type: 'requestFetch',
-          url: actualUrl,
-          modelName: modelName,
-          options: messageOptions,
-          promiseId: promiseId,
-        }, '*');
-
-        return promise;
-      }
-      return originalFetch.apply(window, fetchCallArgs);
-    }
-    return originalFetch.apply(window, fetchCallArgs);
-  };
-
-  window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'resolveFetch') {
-      const { promiseId, response } = event.data;
-      if (pendingFetchResolvers[promiseId]) {
-        try {
-          const reconstructedResponse = new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: new Headers(response.headers),
-          });
-          pendingFetchResolvers[promiseId](reconstructedResponse);
-        } catch (error) {
-          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
-        }
-      }
-    }
-  });
-
-}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
-  const OVERLAY_SELECTOR =
-    'dialog[open], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"]';
-
-  function isVisibleOverlay(element) {
-    if (element.closest('[hidden], [aria-hidden="true"], [inert]')) {
-      return false;
-    }
-    if (window.getComputedStyle(element).visibility === 'hidden') {
-      return false;
-    }
-    for (let cur = element; cur; cur = cur.parentElement) {
-      if (window.getComputedStyle(cur).display === 'none') {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function hasOpenOverlay() {
-    const candidates = document.querySelectorAll(OVERLAY_SELECTOR);
-    for (let i = 0; i < candidates.length; i++) {
-      if (isVisibleOverlay(candidates[i])) {
-        return true;
-      }
-    }
-    try {
-      if (document.querySelector('[popover]:popover-open')) {
-        return true;
-      }
-    } catch (e) {
-      // Ignore engines that do not support :popover-open.
-    }
-    return false;
-  }
-
-  function isNonEmptySearchInput(target) {
-    return (
-      Boolean(target) &&
-      target.tagName === 'INPUT' &&
-      typeof target.type === 'string' &&
-      target.type.toLowerCase() === 'search' &&
-      typeof target.value === 'string' &&
-      target.value.length > 0
-    );
-  }
-
-  function shouldIgnoreEscape(event) {
-    return (
-      event.key !== 'Escape' ||
-      event.altKey ||
-      event.ctrlKey ||
-      event.metaKey ||
-      event.shiftKey ||
-      event.isComposing ||
-      event.repeat ||
-      event.keyCode === 229 ||
-      isNonEmptySearchInput(event.target)
-    );
-  }
-
-  let shouldIgnoreCaptureState = false;
-
-  window.addEventListener(
-    'keydown',
-    function(event) {
-      if (event.key === 'Escape') {
-        shouldIgnoreCaptureState =
-          hasOpenOverlay() || isNonEmptySearchInput(event.target);
-      }
-    },
-    {capture: true},
-  );
-
-  window.addEventListener('keydown', function(event) {
-    if (
-      shouldIgnoreEscape(event) ||
-      event.defaultPrevented ||
-      shouldIgnoreCaptureState
-    ) {
-      return;
-    }
-    const wasBlockedOnCapture = shouldIgnoreCaptureState;
-    queueMicrotask(function() {
-      if (event.defaultPrevented || wasBlockedOnCapture) {
-        return;
-      }
-      if (window.parent && window.parent !== window) {
-        window.parent.postMessage({'type': 'escapeKey'}, '*');
-      }
-    });
-  });
-})();</script><script data-bard-client-injected="true">(function() {
-  function normalizeSlug(str) {
-    try {
-      return str
-        .trim()
-        .toLowerCase()
-        .replace(/[^p{L}p{N}s_-]/gu, '')
-        .replace(/s+/g, '-');
-    } catch (e) {
-      return str
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9s_-]/g, '')
-        .replace(/s+/g, '-');
-    }
-  }
-
-  function findTargetElement(hash) {
-    if (!hash || hash === '#') {
-      return null;
-    }
-    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
-    let decodedId = rawId;
-    try {
-      decodedId = decodeURIComponent(rawId);
-    } catch (e) {
-      // Ignore URI malformed errors.
-    }
-
-    // 1. Direct ID match (raw and decoded).
-    let target = document.getElementById(rawId) || document.getElementById(decodedId);
-    if (target) {
-      return target;
-    }
-
-    // 2. Name attribute match (<a name="...">).
-    try {
-      if (typeof CSS !== 'undefined' && CSS.escape) {
-        target =
-          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
-          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
-      } else {
-        const namedElements = document.getElementsByName(rawId);
-        if (namedElements && namedElements.length > 0) {
-          return namedElements[0];
-        }
-      }
-    } catch (e) {
-      // Ignore querySelector syntax errors.
-    }
-    if (target) {
-      return target;
-    }
-
-    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
-    const targetSlug = normalizeSlug(decodedId);
-    if (targetSlug) {
-      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
-        if (normalizeSlug(heading.textContent || '') === targetSlug) {
-          return heading;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  document.addEventListener('click', function(event) {
-    const target = event.target;
-    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
-    if (!anchor) {
-      return;
-    }
-
-    const href = anchor.getAttribute('href');
-    if (
-      !href ||
-      href.trim().toLowerCase().startsWith('javascript:') ||
-      anchor.hasAttribute('download')
-    ) {
-      return;
-    }
-
-    // Check if the link is an in-page hash / anchor link.
-    if (href.startsWith('#')) {
-      event.preventDefault();
-      const targetElement = findTargetElement(href);
-      if (targetElement) {
-        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
-      }
-      return;
-    }
-
-    // Check if the URL has the same origin/pathname but with a hash.
-    try {
-      const url = new URL(anchor.href, window.location.href);
-      if (
-        url.hash &&
-        url.origin === window.location.origin &&
-        url.pathname === window.location.pathname
-      ) {
-        event.preventDefault();
-        const targetElement = findTargetElement(url.hash);
-        if (targetElement) {
-          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }
-        return;
-      }
-    } catch (e) {
-      // Fall through if URL parsing fails.
-    }
-
-    // For all external or full navigation links, prevent iframe-level navigation
-    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
-    // safely in a new tab/window.
-    if (anchor.target !== '_blank') {
-      event.preventDefault();
-      window.open(anchor.href, '_blank', 'noopener,noreferrer');
-    }
-  }, {capture: true});
-})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const originalConsoleLog = console.log;
-  const originalConsoleError = console.error;
-
-    /**
-   * Normalizes an error event or a promise rejection reason into a structured error object.
-   * @param {*} errorEventOrReason The error object or reason.
-   * @return {object} Structured error data { message, name, stack }.
-   */
-  function getErrorObject(errorEventOrReason) {
-    if (errorEventOrReason instanceof Error) {
-      return {
-        message: errorEventOrReason.message,
-        name: errorEventOrReason.name,
-        stack: errorEventOrReason.stack,
-      };
-    }
-    // Fallback for non-Error objects.
-    try {
-      return {
-        message: JSON.stringify(errorEventOrReason),
-        name: 'UnknownErrorType',
-        stack: null,
-      };
-    } catch (e) {
-      return {
-        message: String(errorEventOrReason),
-        name: 'UnknownErrorTypeNonStringifiable',
-        stack: null,
-      };
-    }
-  }
-
-  /**
-   * Converts an array of arguments (from log/error) into a single string.
-   * Handles Error objects specially to include their message and stack.
-   * @param {Array<*>} args - Arguments passed to console methods.
-   * @return {string} A string representation of the arguments.
-   */
-  function stringifyArgs(args) {
-    return args
-      .map((arg) => {
-        if (arg instanceof Error) {
-          const {message, stack} = arg;
-          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
-        }
-        if (typeof arg === 'object' && arg !== null) {
-          try {
-            return JSON.stringify(arg);
-          } catch (error) {
-            return '[Circular Object]';
-          }
-        } else {
-          return String(arg);
-        }
-      })
-      .join(' ');
-  }
-
-  console.log = function(...args) {
-    const logString = stringifyArgs(args);
-    window.parent.postMessage({ type: 'log', message: logString }, '*');
-    originalConsoleLog.apply(console, args);
-  };
-
-  console.error = function(...args) {
-    let errorData;
-    if (args.length > 0 && args[0] instanceof Error) {
-      const err = args[0];
-      // If the first arg is an Error, capture its details.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        ...getErrorObject(err),
-        rawArgsString: stringifyArgs(args.slice(1)),
-        timestamp: new Date().toISOString(),
-      };
-    } else {
-      // If not an Error object, treat all args as a general error message.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        message: stringifyArgs(args),
-        name: 'ConsoleLoggedError',
-        stack: null,
-        timestamp: new Date().toISOString(),
-      };
-    }
-    window.parent.postMessage(errorData, '*');
-    originalConsoleError.apply(console, args);
-  };
-
-  // Listen for global unhandled synchronous errors.
-  window.addEventListener('error', function(event) {
-    const errorDetails = event.error ? getErrorObject(event.error) : {
-      message: event.message,
-      name: 'GlobalError',
-      stack: null,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-    };
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'global',
-      ...errorDetails,
-      message: errorDetails.message || event.message,
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-  // Listen for unhandled promise rejections (asynchronous errors).
-  window.addEventListener('unhandledrejection', function(event) {
-    const errorDetails = getErrorObject(event.reason);
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'unhandledrejection',
-      ...errorDetails,
-      message: errorDetails.message || 'Unhandled Promise Rejection',
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-})();</script>
+<html lang="ru" class="dark"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>СПО • Лабораторная работа №7–8: msinfo32, dxdiag, msconfig и Autoruns</title>
+    <style id="portal-font">
+        /* Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+https://openfontlicense.org
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded,
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE. */
+        @font-face {
+            font-family: Roboto;
+            font-style: normal;
+            font-weight: 400 800;
+            font-display: swap;
+            src: url(data:font/woff2;base64,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) format('woff2');
+        }
+    </style>
     <style>
         /* =====================================================================
            1. ДИЗАЙН-ТОКЕНЫ И ТЕМЫ (100% АВТОНОМНО, БЕЗ ВНЕШНИХ CDN)
@@ -851,8 +138,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             --yellow-border: #eab308;
             --shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
             --radius: 16px;
-            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            --font-mono: Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, "Liberation Mono", "Courier New", monospace;
+            --font-sans: Roboto, Arial, sans-serif;
         }
 
         html.dark {
@@ -886,7 +172,9 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        button, input, select, textarea, pre, code, kbd, samp { font-family: inherit; }
+        :focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
         body {
             font-family: var(--font-sans);
             background: var(--bg-body);
@@ -894,11 +182,11 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             line-height: 1.58;
             min-height: 100vh;
             transition: background 0.2s, color 0.2s;
-            overflow-x: hidden;
+            overflow-wrap: anywhere;
         }
 
         code {
-            font-family: var(--font-mono);
+            font-family: var(--font-sans);
             font-size: 0.88em;
             background: var(--accent-soft);
             color: var(--accent-text);
@@ -941,7 +229,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         }
         .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
         .badge {
-            font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px;
+            font-size: 0.75rem; font-weight: 700; padding: 2px 9px; border-radius: 999px;
             border: 1px solid var(--border-strong); display: inline-flex; align-items: center; gap: 4px;
         }
         .badge-cyan { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(14,165,233,0.35); }
@@ -955,7 +243,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 9px 14px; border-radius: 11px; font-size: 13px; font-weight: 600;
+            padding: 9px 14px; border-radius: 11px; font-size: 0.8125rem; font-weight: 600;
             border: 1px solid transparent; cursor: pointer; transition: 0.15s ease;
             font-family: var(--font-sans); color: var(--text-main); background: var(--bg-subtle);
             user-select: none;
@@ -971,7 +259,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         .btn-amber:hover { background: #b45309; }
         .btn-outline { background: var(--bg-subtle); border-color: var(--border-strong); color: var(--text-main); }
         .btn-outline:hover { border-color: var(--accent); }
-        .btn-sm { padding: 6px 11px; font-size: 12px; border-radius: 9px; }
+        .btn-sm { padding: 6px 11px; font-size: 0.75rem; border-radius: 9px; }
 
         .lang-switch {
             display: inline-flex; background: var(--bg-subtle); padding: 3px;
@@ -979,7 +267,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         }
         .lang-btn {
             padding: 5px 10px; border-radius: 8px; border: none; background: transparent;
-            color: var(--text-muted); font-size: 12px; font-weight: 700; cursor: pointer;
+            color: var(--text-muted); font-size: 0.75rem; font-weight: 700; cursor: pointer;
         }
         .lang-btn.active { background: var(--accent); color: #fff; }
 
@@ -991,7 +279,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         .tab-btn {
             padding: 8px 14px; border-radius: 11px; border: 1px solid transparent;
             background: var(--bg-subtle); color: var(--text-muted);
-            font-size: 13px; font-weight: 600; cursor: pointer; flex-shrink: 0;
+            font-size: 0.8125rem; font-weight: 600; cursor: pointer; flex-shrink: 0;
             display: inline-flex; align-items: center; gap: 7px; transition: 0.15s;
         }
         .tab-btn:hover { color: var(--text-main); border-color: var(--border-strong); }
@@ -1019,7 +307,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         .step-num {
             width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 15px;
+            font-weight: 800; font-size: 0.9375rem;
             background: var(--accent-soft); color: var(--accent-text);
         }
         .card h3 { font-size: 1.15rem; font-weight: 800; line-height: 1.3; }
@@ -1033,7 +321,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         .col-6 { grid-column: span 6; }
 
         @media (max-width: 900px) {
-            .grid-2, .grid-3, .grid-12 { grid-template-columns: 1fr; }
+            .grid-2, .grid-3, .grid-12 { grid-template-columns: minmax(0, 1fr); }
             .col-7, .col-5, .col-6 { grid-column: span 1; }
         }
 
@@ -1069,7 +357,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             display: flex; align-items: center; justify-content: space-between; gap: 10px;
             background: var(--bg-code); color: #34d399; padding: 11px 14px;
             border-radius: 11px; border: 1px solid var(--border-strong);
-            font-family: var(--font-mono); font-size: 12px; overflow-x: auto;
+            font-family: var(--font-sans); font-size: 0.75rem; overflow-x: auto;
         }
         .cmd-box span { white-space: nowrap; }
 
@@ -1086,7 +374,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         .filter-bar { display: flex; flex-wrap: wrap; gap: 7px; }
         .filter-btn {
             padding: 7px 12px; border-radius: 9px; border: 1px solid var(--border-strong);
-            background: var(--bg-card); color: var(--text-muted); font-size: 12px; font-weight: 600;
+            background: var(--bg-card); color: var(--text-muted); font-size: 0.75rem; font-weight: 600;
             cursor: pointer; transition: 0.15s;
         }
         .filter-btn:hover { border-color: var(--accent); color: var(--text-main); }
@@ -1096,27 +384,27 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         .log-entry {
             padding: 11px 13px; border-radius: 11px; background: var(--bg-card);
             border: 1px solid var(--border-strong); border-left: 4px solid var(--accent);
-            font-size: 12.5px; display: flex; flex-direction: column; gap: 4px;
+            font-size: 0.7812rem; display: flex; flex-direction: column; gap: 4px;
         }
         .log-entry.sev-crit { border-left-color: #e11d48; background: var(--rose-soft); }
         .log-entry.sev-warn { border-left-color: #d97706; background: var(--amber-soft); }
         .log-entry.sev-ok { border-left-color: #10b981; }
-        .log-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; font-family: var(--font-mono); font-size: 11px; }
-        .log-raw { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-main); word-break: break-word; }
+        .log-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; font-family: var(--font-sans); font-size: 0.75rem; }
+        .log-raw { font-family: var(--font-sans); font-size: 0.75rem; color: var(--text-main); word-break: break-word; }
 
         /* =====================================================================
            5. СИМУЛЯТОР ПАРЫ 8: РЮКЗАК АЛЬПИНИСТА (AUTORUNS)
            ===================================================================== */
         .telemetry-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-        @media (max-width: 720px) { .telemetry-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 720px) { .telemetry-grid { grid-template-columns: minmax(0, 1fr); } }
 
         .metric-card {
             background: var(--bg-card); border: 1px solid var(--border-strong);
             border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 4px;
         }
-        .metric-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.03em; }
-        .metric-val { font-size: 1.55rem; font-weight: 800; font-family: var(--font-mono); }
-        .metric-sub { font-size: 11.5px; color: var(--text-muted); }
+        .metric-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.03em; }
+        .metric-val { font-size: 1.55rem; font-weight: 800; font-family: var(--font-sans); }
+        .metric-sub { font-size: 0.75rem; color: var(--text-muted); }
 
         .ar-row-pink { background: var(--pink-row) !important; }
         .ar-row-pink td { color: var(--text-main) !important; border-bottom-color: var(--pink-border) !important; }
@@ -1135,15 +423,15 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
            6. ФОРМЫ, ТЕСТ (20 ВОПРОСОВ), TOAST, ПЕЧАТЬ / PDF
            ===================================================================== */
         .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
-        .field label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .field label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
         .input, .textarea, .select {
             width: 100%; padding: 9px 12px; border-radius: 10px;
             background: var(--bg-card); color: var(--text-main);
-            border: 1px solid var(--border-strong); font-family: var(--font-sans); font-size: 13px;
+            border: 1px solid var(--border-strong); font-family: var(--font-sans); font-size: 1rem;
             outline: none;
         }
         .input:focus, .textarea:focus, .select:focus { border-color: var(--accent); }
-        .input-mono { font-family: var(--font-mono); font-weight: 600; }
+        .input-mono { font-family: var(--font-sans); font-weight: 600; }
 
         .quiz-card {
             background: var(--bg-card); border: 1px solid var(--border);
@@ -1153,12 +441,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         .quiz-card.q-wrong { border-color: #e11d48; }
         .quiz-q { font-weight: 700; font-size: 0.94rem; }
         .quiz-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        @media (max-width: 640px) { .quiz-opts { grid-template-columns: 1fr; } }
+        @media (max-width: 640px) { .quiz-opts { grid-template-columns: minmax(0, 1fr); } }
 
         .quiz-opt {
             display: flex; align-items: center; gap: 10px; padding: 10px 12px;
             border-radius: 10px; border: 1px solid var(--border-strong);
-            background: var(--bg-subtle); cursor: pointer; font-size: 13px; transition: 0.15s;
+            background: var(--bg-subtle); cursor: pointer; font-size: 0.8125rem; transition: 0.15s;
         }
         .quiz-opt:hover { border-color: var(--accent); }
         .quiz-opt input { accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; }
@@ -1168,14 +456,14 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         #toast {
             position: fixed; bottom: 20px; right: 20px; z-index: 60;
             background: var(--accent); color: #fff; padding: 12px 18px; border-radius: 12px;
-            font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+            font-size: 0.8125rem; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
             transform: translateY(100px); opacity: 0; transition: 0.25s ease;
             pointer-events: none; max-width: 90vw;
         }
         #toast.show { transform: translateY(0); opacity: 1; }
 
         footer {
-            text-align: center; padding: 24px 16px; font-size: 12px;
+            text-align: center; padding: 24px 16px; font-size: 0.75rem;
             color: var(--text-muted); border-top: 1px solid var(--border);
         }
 
@@ -1190,6 +478,51 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             }
             .input, .textarea, .select { border: 1px solid #94a3b8 !important; color: #000 !important; background: #fff !important; }
         }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            min-height: 44px;
+            padding: 0.45rem 0.8rem;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-text);
+            border-radius: 10px;
+            color: var(--accent-text);
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .back-link:hover { background: var(--bg-subtle); }
+        .header-top { flex-wrap: nowrap; }
+        .tabs-nav { flex-wrap: wrap; scrollbar-width: thin; }
+        .tab-btn { min-height: 44px; white-space: normal; text-align: start; }
+        .grid-2 > *, .grid-3 > *, .grid-12 > *, .card-header > * { min-width: 0; }
+        .card, .hero-banner { padding: clamp(0.875rem, 2vw, 1.375rem); }
+        .cmd-box { flex-wrap: wrap; }
+        .cmd-box span { white-space: normal; }
+        .field { max-width: 100%; }
+        textarea { resize: vertical; }
+
+        @media (max-width: 48rem) {
+            .header-top {
+                display: grid;
+                grid-template-columns: auto minmax(0, 1fr);
+                align-items: start;
+                gap: 0.75rem;
+            }
+            .header-controls { grid-column: 1 / -1; justify-content: space-between; }
+            .btn-download { flex: 1; }
+            .brand-logo { display: none; }
+            .tabs-nav { flex-wrap: nowrap; margin: 0; padding-inline: 0; }
+            .tabs-nav::-webkit-scrollbar { display: block; height: 5px; }
+            .tab-btn { max-width: 90%; }
+        }
+        @media (max-height: 32rem) {
+            #main-header { position: static; }
+        }
+        .container.header-inner { padding-inline: clamp(0.875rem, 2vw, 1.5rem); }
+        main.container { padding-block: clamp(1rem, 2vw, 1.75rem) 3rem; }
+        .header-controls { flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -1201,6 +534,11 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
     <header id="main-header" class="no-print">
         <div class="container header-inner">
             <div class="header-top">
+                <a class="back-link" href="index.html">
+                    <span aria-hidden="true">←</span>
+                    <span class="lang-ru">Назад</span>
+                    <span class="lang-kz hidden">Артқа</span>
+                </a>
                 <div class="brand">
                     <div class="brand-logo" aria-hidden="true">
                         <svg class="icon" style="width:26px;height:26px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1230,7 +568,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
                 <!-- Правая панель: Скачать, RU|KZ, Тема -->
                 <div class="header-controls">
-                    <button class="btn btn-primary btn-sm" onclick="downloadThisHtml()">
+                    <button class="btn btn-primary btn-download" onclick="downloadThisHtml()">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         <span class="lang-ru">Скачать .html</span>
                         <span class="lang-kz hidden">Жүктеу .html</span>
@@ -1366,17 +704,17 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong><code>msconfig</code></strong><br><span class="muted" style="font-size:11px;">Конфигурация системы</span></td>
+                                <td><strong><code>msconfig</code></strong><br><span class="muted" style="font-size:0.75rem;">Конфигурация системы</span></td>
                                 <td><span class="lang-ru">Режимы загрузки (Обычный / Диагностический), Безопасный режим и вкладка <strong>Службы</strong> (обязательно ставим галочку <em>«Не отображать службы Майкрософт»</em>).</span><span class="lang-kz hidden">Жүктеу режимдері, Қауіпсіз режим және <strong>Қызметтер</strong> беті (<em>«Microsoft қызметтерін көрсетпеу»</em> құсбелгісін қою міндетті).</span></td>
                                 <td><span class="lang-ru">В Windows 10/11 управление программами автозагрузки перенесено в Диспетчер задач.</span><span class="lang-kz hidden">Windows 10/11-де автожүктеу бағдарламалары Тапсырмалар диспетчеріне көшірілген.</span></td>
                             </tr>
                             <tr>
-                                <td><strong><span class="lang-ru">Диспетчер задач</span><span class="lang-kz hidden">Тапсырмалар диспетчері</span></strong><br><span class="muted" style="font-size:11px;"><code>taskmgr</code> → Автозагрузка</span></td>
+                                <td><strong><span class="lang-ru">Диспетчер задач</span><span class="lang-kz hidden">Тапсырмалар диспетчері</span></strong><br><span class="muted" style="font-size:0.75rem;"><code>taskmgr</code> → Автозагрузка</span></td>
                                 <td><span class="lang-ru">Показывает <strong>«Последнее время BIOS»</strong>, базовые ветки реестра <code>Run</code>, папку <code>Startup</code> и оценку <em>«Влияние на запуск»</em> (Высокое / Среднее / Низкое).</span><span class="lang-kz hidden"><strong>«Соңғы BIOS уақытын»</strong>, <code>Run</code> реестр тармақтарын, <code>Startup</code> бумасын және іске қосуға әсерін көрсетеді.</span></td>
                                 <td><span class="lang-ru">Не видит Планировщик заданий (Scheduled Tasks), службы, модули Winlogon и расширения проводника.</span><span class="lang-kz hidden">Тапсырмалар жоспарлаушысын, қызметтерді және Winlogon модульдерін көрсетпейді.</span></td>
                             </tr>
                             <tr>
-                                <td><strong>Sysinternals <code>Autoruns</code></strong><br><span class="muted" style="font-size:11px;">Официальная утилита Microsoft</span></td>
+                                <td><strong>Sysinternals <code>Autoruns</code></strong><br><span class="muted" style="font-size:0.75rem;">Официальная утилита Microsoft</span></td>
                                 <td><span class="lang-ru">Абсолютно все точки автозапуска: <code>HKLM/HKCU\...\Run &amp; RunOnce</code>, <strong>Scheduled Tasks</strong>, Services, Drivers, <strong>Winlogon</strong>, Explorer Shell Extensions + проверка цифровой подписи и VirusTotal.</span><span class="lang-kz hidden">Барлық автожүктеу нүктелері: <code>HKLM/HKCU\...\Run &amp; RunOnce</code>, <strong>Scheduled Tasks</strong>, Services, <strong>Winlogon</strong>, Explorer кеңейтімдері + цифрлық қолтаңба тексеруі.</span></td>
                                 <td><span class="lang-ru">Мощный инструмент: сначала включайте <code>Options → Hide Microsoft Entries</code>, чтобы случайно не сломать Windows.</span><span class="lang-kz hidden">Қуатты құрал: Windows-ты бүлдіріп алмау үшін алдымен <code>Options → Hide Microsoft Entries</code> қосыңыз.</span></td>
                             </tr>
@@ -1456,8 +794,8 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     </div>
 
                     <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
-                        <input type="text" id="nfo-search" class="input input-mono" style="flex:1; min-width:220px;" oninput="renderNfoLogs()" placeholder="Поиск по дампу (Error, Code 43, WHQL, VBS, BEX64, IRQ)...">
-                        <span id="nfo-count-badge" class="badge badge-cyan" style="padding:7px 12px; font-size:12px;">12 / 12</span>
+                        <input type="text" id="nfo-search" class="input input-mono" style="flex:1; min-width:min(100%, 220px);" oninput="renderNfoLogs()" placeholder="Поиск по дампу (Error, Code 43, WHQL, VBS, BEX64, IRQ)...">
+                        <span id="nfo-count-badge" class="badge badge-cyan" style="padding:7px 12px; font-size:0.75rem;">12 / 12</span>
                     </div>
 
                     <div id="nfo-log-list" class="log-list">
@@ -1467,7 +805,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-emerald">OK</span>
                             </div>
                             <div class="log-raw">OS Name: Microsoft Windows 11 Pro (10.0.22631) | BIOS Mode: UEFI | Secure Boot State: On</div>
-                            <div style="font-size:12px; color:var(--text-muted);">ОС установлена в современном режиме UEFI с включенной безопасной загрузкой Secure Boot.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">ОС установлена в современном режиме UEFI с включенной безопасной загрузкой Secure Boot.</div>
                         </div>
                     
                         <div class="log-entry sev-warn">
@@ -1476,7 +814,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-amber">WARNING</span>
                             </div>
                             <div class="log-raw">Virtualization-based security (VBS): Not enabled | HVCI (Memory Integrity): Off | Kernel DMA Protection: Off</div>
-                            <div style="font-size:12px; color:var(--text-muted);">ВНИМАНИЕ: Безопасность на основе виртуализации (VBS) и целостность памяти HVCI отключены.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">ВНИМАНИЕ: Безопасность на основе виртуализации (VBS) и целостность памяти HVCI отключены.</div>
                         </div>
                     
                         <div class="log-entry sev-warn">
@@ -1485,7 +823,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-amber">WARNING</span>
                             </div>
                             <div class="log-raw">IRQ 16: Intel(R) PCI Express Root Port #5  &lt;--&gt;  NVIDIA GeForce RTX 3060  &lt;--&gt;  High Definition Audio Controller</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Совместное использование линии прерывания IRQ 16 тремя контроллерами (возможны микрофризы звука/видео).</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Совместное использование линии прерывания IRQ 16 тремя контроллерами (возможны микрофризы звука/видео).</div>
                         </div>
                     
                         <div class="log-entry sev-ok">
@@ -1494,7 +832,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-emerald">OK</span>
                             </div>
                             <div class="log-raw">I/O Port 0x00000000-0x00000CF7: PCI Express Root Complex | Status: OK (No resource conflict)</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Базовые порты ввода-вывода PCIe распределены корректно, прямых конфликтов адресов нет.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Базовые порты ввода-вывода PCIe распределены корректно, прямых конфликтов адресов нет.</div>
                         </div>
                     
                         <div class="log-entry sev-crit">
@@ -1503,7 +841,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-rose">CRITICAL</span>
                             </div>
                             <div class="log-raw">NVIDIA GeForce RTX 3060 | PCI\VEN_10DE&amp;DEV_2504 | Error Code 43: Windows has stopped this device because it has reported problems.</div>
-                            <div style="font-size:12px; color:var(--text-muted);">КРИТИЧНО (Код 43): Видеоадаптер остановлен системой из-за аппаратного или драйверного сбоя!</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">КРИТИЧНО (Код 43): Видеоадаптер остановлен системой из-за аппаратного или драйверного сбоя!</div>
                         </div>
                     
                         <div class="log-entry sev-warn">
@@ -1512,7 +850,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-amber">WARNING</span>
                             </div>
                             <div class="log-raw">Unknown PCI Encryption/Decryption Controller | PCI\VEN_1022&amp;DEV_1486 | Error Code 28: The drivers for this device are not installed.</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Проблемное устройство (Код 28): Не установлен драйвер контроллера шифрования чипсета.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Проблемное устройство (Код 28): Не установлен драйвер контроллера шифрования чипсета.</div>
                         </div>
                     
                         <div class="log-entry sev-crit">
@@ -1521,7 +859,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-rose">CRITICAL</span>
                             </div>
                             <div class="log-raw">Realtek HD Audio (RTKVHD64.sys v6.0.8924.1) | WHQL Logo'd: No | Note: The file RTKVHD64.sys is not digitally signed!</div>
-                            <div style="font-size:12px; color:var(--text-muted);">КРИТИЧНО (WHQL: No): Драйвер звуковой карты не имеет цифровой подписи WHQL Microsoft.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">КРИТИЧНО (WHQL: No): Драйвер звуковой карты не имеет цифровой подписи WHQL Microsoft.</div>
                         </div>
                     
                         <div class="log-entry sev-ok">
@@ -1530,7 +868,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-emerald">OK</span>
                             </div>
                             <div class="log-raw">DirectX Version: DirectX 12 | Driver Model: WDDM 3.1 | WHQL Logo'd: Yes (nvlddmkm.sys) | Direct3D Acceleration: Enabled</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Графическая подсистема DirectX 12 (WDDM 3.1) и подпись видеодрайвера WHQL подтверждены.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Графическая подсистема DirectX 12 (WDDM 3.1) и подпись видеодрайвера WHQL подтверждены.</div>
                         </div>
                     
                         <div class="log-entry sev-crit">
@@ -1539,7 +877,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-rose">CRITICAL</span>
                             </div>
                             <div class="log-raw">Application Error | Faulting application: game.exe | Exception: BEX64 (Buffer Overflow) | Module: nvgpucomp64.dll</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Сбой приложения (WER BEX64): Аварийное завершение game.exe из-за ошибки переполнения буфера в модуле GPU.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Сбой приложения (WER BEX64): Аварийное завершение game.exe из-за ошибки переполнения буфера в модуле GPU.</div>
                         </div>
                     
                         <div class="log-entry sev-crit">
@@ -1548,7 +886,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-rose">CRITICAL</span>
                             </div>
                             <div class="log-raw">Kernel-Power Event ID 41 (Task 63): The system has rebooted without cleanly shutting down first (BSOD / Power loss).</div>
-                            <div style="font-size:12px; color:var(--text-muted);">КРИТИЧНО (Kernel-Power 41): Неожиданная перезагрузка без корректного завершения работы (просадка БП или BSOD).</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">КРИТИЧНО (Kernel-Power 41): Неожиданная перезагрузка без корректного завершения работы (просадка БП или BSOD).</div>
                         </div>
                     
                         <div class="log-entry sev-ok">
@@ -1557,7 +895,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-emerald">OK</span>
                             </div>
                             <div class="log-raw">Intel(R) Ethernet Controller I225-V | Status: OK | Driver: e2f.sys (Verified) | Link Speed: 1000 Mbps</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Сетевой контроллер работает штатно, драйвер подписан, конфликтов нет.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Сетевой контроллер работает штатно, драйвер подписан, конфликтов нет.</div>
                         </div>
                     
                         <div class="log-entry sev-ok">
@@ -1566,7 +904,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 <span class="badge badge-emerald">OK</span>
                             </div>
                             <div class="log-raw">USB Keyboard &amp; Optical Mouse | Status: Attached | Notes: No problems found.</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Устройства ввода DirectInput исправны, неполадок не выявлено.</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Устройства ввода DirectInput исправны, неполадок не выявлено.</div>
                         </div>
                     </div>
 
@@ -1698,12 +1036,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(0)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">SecurityHealthSystray.exe</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Агент Windows Defender</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">SecurityHealthSystray.exe</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Агент Windows Defender</span>
                         </td>
-                        <td style="font-size:12px;">(Verified) Microsoft Windows</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Windows\System32\SecurityHealthSystray.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+1.2s / 85 MB</td>
+                        <td style="font-size:0.75rem;">(Verified) Microsoft Windows</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Windows\System32\SecurityHealthSystray.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+1.2s / 85 MB</td>
                     </tr>
                 
                     <tr class="">
@@ -1711,12 +1049,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(1)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">RtkAudUService64.exe</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Служба аудио Realtek</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">RtkAudUService64.exe</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Служба аудио Realtek</span>
                         </td>
-                        <td style="font-size:12px;">(Verified) Realtek Semiconductor</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Windows\System32\RtkAudUService64.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+1s / 65 MB</td>
+                        <td style="font-size:0.75rem;">(Verified) Realtek Semiconductor</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Windows\System32\RtkAudUService64.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+1s / 65 MB</td>
                     </tr>
                 
                     <tr class="">
@@ -1724,12 +1062,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(2)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">Steam.exe -silent</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Игровой лаунчер</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">Steam.exe -silent</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Игровой лаунчер</span>
                         </td>
-                        <td style="font-size:12px;">(Verified) Valve Corp.</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Program Files (x86)\Steam\Steam.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+6.5s / 420 MB</td>
+                        <td style="font-size:0.75rem;">(Verified) Valve Corp.</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Program Files (x86)\Steam\Steam.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+6.5s / 420 MB</td>
                     </tr>
                 
                     <tr class="">
@@ -1737,12 +1075,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(3)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">EpicGamesLauncher.exe</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Игровой лаунчер</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">EpicGamesLauncher.exe</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Игровой лаунчер</span>
                         </td>
-                        <td style="font-size:12px;">(Verified) Epic Games, Inc.</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Program Files (x86)\Epic Games\Launcher\EpicGamesLauncher.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+5.8s / 380 MB</td>
+                        <td style="font-size:0.75rem;">(Verified) Epic Games, Inc.</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Program Files (x86)\Epic Games\Launcher\EpicGamesLauncher.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+5.8s / 380 MB</td>
                     </tr>
                 
                     <tr class="">
@@ -1750,12 +1088,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(4)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">AdobeGCClient.exe</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Фоновый апдейтер Adobe</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">AdobeGCClient.exe</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Фоновый апдейтер Adobe</span>
                         </td>
-                        <td style="font-size:12px;">(Verified) Adobe Inc.</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Program Files (x86)\Common Files\Adobe\AdobeGCClient.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+3.2s / 210 MB</td>
+                        <td style="font-size:0.75rem;">(Verified) Adobe Inc.</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Program Files (x86)\Common Files\Adobe\AdobeGCClient.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+3.2s / 210 MB</td>
                     </tr>
                 
                     <tr class="">
@@ -1763,12 +1101,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(5)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">Discord.exe --processStart</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Мессенджер (тяжелый Electron)</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">Discord.exe --processStart</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Мессенджер (тяжелый Electron)</span>
                         </td>
-                        <td style="font-size:12px;">(Verified) Discord Inc.</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Users\Student\AppData\Local\Discord\Update.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+7s / 460 MB</td>
+                        <td style="font-size:0.75rem;">(Verified) Discord Inc.</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Users\Student\AppData\Local\Discord\Update.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+7s / 460 MB</td>
                     </tr>
                 
                     <tr class="">
@@ -1776,12 +1114,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(6)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">OneDrive.exe /background</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Облачная синхронизация</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">OneDrive.exe /background</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Облачная синхронизация</span>
                         </td>
-                        <td style="font-size:12px;">(Verified) Microsoft Corporation</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Program Files\Microsoft OneDrive\OneDrive.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+3.5s / 190 MB</td>
+                        <td style="font-size:0.75rem;">(Verified) Microsoft Corporation</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Program Files\Microsoft OneDrive\OneDrive.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+3.5s / 190 MB</td>
                     </tr>
                 
                     <tr class="ar-row-yellow">
@@ -1789,12 +1127,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(7)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">OldPrinterMonitor.exe</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Битая ссылка реестра</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">OldPrinterMonitor.exe</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Битая ссылка реестра</span>
                         </td>
-                        <td style="font-size:12px;">File not found (Orphan Entry)</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">HKLM\...\Run -&gt; C:\Program Files\OldPrinter\mon.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+1.8s / 0 MB</td>
+                        <td style="font-size:0.75rem;">File not found (Orphan Entry)</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">HKLM\...\Run -&gt; C:\Program Files\OldPrinter\mon.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+1.8s / 0 MB</td>
                     </tr>
                 
                     <tr class="ar-row-pink">
@@ -1802,12 +1140,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(8)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">svchost_helper_x64.exe</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Подозрительный неподписанный файл!</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">svchost_helper_x64.exe</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Подозрительный неподписанный файл!</span>
                         </td>
-                        <td style="font-size:12px;">(Not Verified) Unknown Publisher</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Users\Student\AppData\Roaming\Temp\svchost_helper_x64.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+4.5s / 310 MB</td>
+                        <td style="font-size:0.75rem;">(Not Verified) Unknown Publisher</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Users\Student\AppData\Roaming\Temp\svchost_helper_x64.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+4.5s / 310 MB</td>
                     </tr>
                 
                     <tr class="">
@@ -1815,12 +1153,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" checked="" onchange="toggleAutorunItem(9)">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">igfxEM.exe</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">Модуль дисплея Intel</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">igfxEM.exe</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Модуль дисплея Intel</span>
                         </td>
-                        <td style="font-size:12px;">(Verified) Intel Corporation</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">C:\Windows\System32\DriverStore\igfxEM.exe</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+0.8s / 50 MB</td>
+                        <td style="font-size:0.75rem;">(Verified) Intel Corporation</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">C:\Windows\System32\DriverStore\igfxEM.exe</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+0.8s / 50 MB</td>
                     </tr>
                 </tbody>
                         </table>
@@ -1881,7 +1219,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         <span class="lang-kz hidden">Әр нұсқаны мұқият оқыңыз. Тексеруден кейін нәтиже 5-бөлімдегі есебіңізге автоматты түрде жазылады.</span>
                     </p>
                 </div>
-                <div id="test-score-badge" class="badge badge-cyan" style="font-size:14px; padding:8px 14px;">
+                <div id="test-score-badge" class="badge badge-cyan" style="font-size:0.875rem; padding:8px 14px;">
                     <span class="lang-ru">Не завершен</span><span class="lang-kz hidden">Аяқталмаған</span>
                 </div>
             </div>
@@ -2409,7 +1747,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <li><span class="lang-ru">На окне предпросмотра <strong>разведите двумя пальцами</strong> превью страницы — оно мгновенно превратится в готовый PDF-документ!</span><span class="lang-kz hidden">Алдын ала қарау терезесінде бетті <strong>екі саусақпен үлкейтіңіз</strong> — ол дайын PDF құжатына айналады!</span></li>
                             <li><span class="lang-ru">Нажмите «Поделиться» → <strong>«Сохранить в Файлы» (PDF)</strong> или сразу отправьте преподавателю в чат.</span><span class="lang-kz hidden">«Бөлісу» → <strong>«Файлдарға сақтау» (PDF)</strong> батырмасын басыңыз немесе оқытушыға жіберіңіз.</span></li>
                         </ol>
-                        <p class="muted" style="font-size:12px; margin-top:10px;">
+                        <p class="muted" style="font-size:0.75rem; margin-top:10px;">
                             💡 <span class="lang-ru">Быстрая альтернатива на телефоне: нажмите <strong>«Копировать отчет»</strong> или <strong>«Скачать отчет (.html)»</strong> и отправьте прямо в Telegram/WhatsApp.</span>
                             <span class="lang-kz hidden">Телефондағы жылдам балама: <strong>«Есепті көшіру»</strong> немесе <strong>«Есепті жүктеу (.html)»</strong> басып чатқа жіберіңіз.</span>
                         </p>
@@ -2684,7 +2022,8 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
         function setLanguage(lang) {
             currentLang = lang;
-            localStorage.setItem('spo_lab78_lang', lang);
+            document.documentElement.lang = lang === 'kz' ? 'kk' : 'ru';
+            try { localStorage.setItem('spo_portal_lang', lang); } catch (e) {}
 
             document.querySelectorAll('.lang-ru').forEach(el => el.classList.toggle('hidden', lang === 'kz'));
             document.querySelectorAll('.lang-kz').forEach(el => el.classList.toggle('hidden', lang === 'ru'));
@@ -2708,11 +2047,11 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
                 btn.textContent = '🌙';
-                localStorage.setItem('spo_lab78_theme', 'light');
+                try { localStorage.setItem('spo_portal_theme', 'light'); } catch (e) {}
             } else {
                 html.classList.add('dark');
                 btn.textContent = '☀️';
-                localStorage.setItem('spo_lab78_theme', 'dark');
+                try { localStorage.setItem('spo_portal_theme', 'dark'); } catch (e) {}
             }
         }
 
@@ -2791,7 +2130,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                 ${sevBadge}
                             </div>
                             <div class="log-raw">${item.raw}</div>
-                            <div style="font-size:12px; color:var(--text-muted);">${desc}</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">${desc}</div>
                         </div>
                     `;
                 }).join('');
@@ -2909,12 +2248,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <input type="checkbox" class="ar-chk" ${item.enabled ? 'checked' : ''} onchange="toggleAutorunItem(${idx})">
                         </td>
                         <td>
-                            <strong style="font-family:var(--font-mono); font-size:12px;">${item.name}</strong><br>
-                            <span style="font-size:11px; color:var(--text-muted);">${desc}</span>
+                            <strong style="font-family:var(--font-sans); font-size:0.75rem;">${item.name}</strong><br>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">${desc}</span>
                         </td>
-                        <td style="font-size:12px;">${item.pub}</td>
-                        <td style="font-family:var(--font-mono); font-size:11px; word-break:break-all;">${item.path}</td>
-                        <td style="font-family:var(--font-mono); font-size:11.5px; white-space:nowrap;">+${item.boot}s / ${item.ram} MB</td>
+                        <td style="font-size:0.75rem;">${item.pub}</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; word-break:break-all;">${item.path}</td>
+                        <td style="font-family:var(--font-sans); font-size:0.75rem; white-space:nowrap;">+${item.boot}s / ${item.ram} MB</td>
                     </tr>
                 `;
             }).join('');
@@ -3083,6 +2422,10 @@ ${dis}
         }
 
         function downloadReportHtml() {
+            function escapeText(value) {
+                return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+            }
+
             const name = document.getElementById('rep-name').value || 'Student';
             const group = document.getElementById('rep-group').value || 'Group';
             const pc = document.getElementById('rep-pc').value || '—';
@@ -3090,15 +2433,15 @@ ${dis}
             const exp = document.getElementById('rep-exp').value;
             const vbs = document.getElementById('rep-vbs').value || '—';
             const whql = document.getElementById('rep-whql').value;
-            const prob = (document.getElementById('rep-prob').value || '—').replace(/\n/g, '<br>');
-            const flt = (document.getElementById('rep-filter').value || '—').replace(/\n/g, '<br>');
+            const prob = (document.getElementById('rep-prob').value || '—');
+            const flt = (document.getElementById('rep-filter').value || '—');
             const b1 = document.getElementById('rep-boot-before').value || '—';
             const b2 = document.getElementById('rep-boot-after').value || '—';
             const r1 = document.getElementById('rep-ram-before').value || '—';
             const r2 = document.getElementById('rep-ram-after').value || '—';
-            const dis = (document.getElementById('rep-disabled').value || '—').replace(/\n/g, '<br>');
+            const dis = (document.getElementById('rep-disabled').value || '—');
 
-            const html = `<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Отчет СПО №7-8 — ${name}</title><style>body{font-family:Arial,sans-serif;max-width:780px;margin:28px auto;padding:18px;color:#0f172a;line-height:1.6}h1{font-size:20px;border-bottom:2px solid #0284c7;padding-bottom:8px}.box{background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:14px;margin:14px 0}</style></head><body><h1>Отчет по Лабораторной работе №7–8 (СПО: msinfo32, dxdiag, Autoruns)</h1><div class="box"><strong>Студент:</strong> ${name}<br><strong>Группа:</strong> ${group}<br><strong>ПК / ОС:</strong> ${pc}<br><strong>Итоговый тест:</strong> ${score}</div><div class="box"><strong>Пара 7 (msinfo32 &amp; dxdiag):</strong><br>Экспорт: ${exp}<br>Secure Boot / VBS: ${vbs}<br>Подпись WHQL: ${whql}<br>Конфликты / Проблемные устройства: ${prob}<br>Фильтр .nfo: <code>${flt}</code></div><div class="box"><strong>Пара 8 (Автозагрузка «До / После»):</strong><br>Холодный старт: <strong>${b1} сек → ${b2} сек</strong><br>ОЗУ в простое: <strong>${r1} ГБ → ${r2} ГБ</strong><br><br><strong>Отключенные программы:</strong><br>${dis}</div></body></html>`;
+            const html = `<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Отчет СПО №7-8 — ${escapeText(name)}</title><style>${document.getElementById('portal-font').textContent} body{font-family:Roboto,Arial,sans-serif;overflow-wrap:anywhere;max-width:780px;margin:28px auto;padding:18px;color:#0f172a;line-height:1.6}h1{font-size:1.25rem;border-bottom:2px solid #0284c7;padding-bottom:8px}code{font-family:inherit}.box{white-space:pre-line;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:14px;margin:14px 0}</style></head><body><h1>Отчет по Лабораторной работе №7–8 (СПО: msinfo32, dxdiag, Autoruns)</h1><div class="box"><strong>Студент:</strong> ${escapeText(name)}<br><strong>Группа:</strong> ${escapeText(group)}<br><strong>ПК / ОС:</strong> ${escapeText(pc)}<br><strong>Итоговый тест:</strong> ${escapeText(score)}</div><div class="box"><strong>Пара 7 (msinfo32 &amp; dxdiag):</strong><br>Экспорт: ${escapeText(exp)}<br>Secure Boot / VBS: ${escapeText(vbs)}<br>Подпись WHQL: ${escapeText(whql)}<br>Конфликты / Проблемные устройства: ${escapeText(prob)}<br>Фильтр .nfo: <code>${escapeText(flt)}</code></div><div class="box"><strong>Пара 8 (Автозагрузка «До / После»):</strong><br>Холодный старт: <strong>${escapeText(b1)} сек → ${escapeText(b2)} сек</strong><br>ОЗУ в простое: <strong>${escapeText(r1)} ГБ → ${escapeText(r2)} ГБ</strong><br><br><strong>Отключенные программы:</strong><br>${escapeText(dis)}</div></body></html>`;
 
             const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
             const url = URL.createObjectURL(blob);
@@ -3130,12 +2473,15 @@ ${dis}
            7. ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ
            ===================================================================== */
         window.onload = function () {
-            if (localStorage.getItem('spo_lab78_theme') === 'light') {
-                document.documentElement.classList.remove('dark');
-                document.getElementById('theme-btn').textContent = '🌙';
-            }
-            const savedLang = localStorage.getItem('spo_lab78_lang') || 'ru';
-            setLanguage(savedLang);
+            let theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            let lang = document.documentElement.lang === 'kk' ? 'kz' : 'ru';
+            try {
+                theme = localStorage.getItem('spo_portal_theme') || localStorage.getItem('spo_lab78_theme') || theme;
+                lang = localStorage.getItem('spo_portal_lang') || localStorage.getItem('spo_lab78_lang') || lang;
+            } catch (e) {}
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+            document.getElementById('theme-btn').textContent = theme === 'dark' ? '☀️' : '🌙';
+            setLanguage(lang === 'kz' ? 'kz' : 'ru');
         };
     </script>
 
